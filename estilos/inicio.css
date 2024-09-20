@@ -19,7 +19,7 @@ header {
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 100%;
 }
 
@@ -39,7 +39,7 @@ header {
 }
 
 #search input {
-    width: 100%;
+    width: 80%;
     padding: 0.5em 1em;
     border: 1px solid black;
     border-radius: 20px;
@@ -60,6 +60,47 @@ header {
     background-color: black;
     border: 1px solid black;
     color: white;
+}
+
+#carrinho {
+    flex: 1;
+    text-align: right;
+    margin-right: 30px;
+}
+
+#carrinho img {
+    width: 40px;
+    height: auto;
+}
+
+#login{
+    flex: 1;
+    text-align: right;
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+#login img {
+    width: 40px;
+    height: auto;
+}
+
+.login-carrinho{
+    display: flex;
+    align-items: center;
+}
+
+i#burguer{
+    background-color: #e27d36;
+    display: none;
+    text-align: center;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+}
+i#burguer:hover{
+    background-color: white;
+    color: #3C7785;
 }
 
 #cabecalho {
@@ -86,17 +127,6 @@ header {
     color: #abd1c6;
 }
 
-#carrinho {
-    flex: 1;
-    text-align: right;
-    margin-right: 30px;
-}
-
-#carrinho img {
-    width: 40px;
-    height: auto;
-}
-
 .sumario{
     display: flex;
     justify-content: center;
@@ -104,7 +134,7 @@ header {
     padding: 1em 0;
 }
 
-.sumario nav ul {
+.sumario menu ul {
     list-style: none;
     display: flex;
     gap: 20px;
@@ -112,12 +142,7 @@ header {
     padding: 0;
 }
 
-.sumario nav ul li {
-    margin: 0;
-    padding: 0;
-}
-
-.sumario nav ul li a {
+.sumario menu ul li a {
     text-decoration: none;
     color: black;
     font-weight: bold;
@@ -125,28 +150,51 @@ header {
     transition: background-color 0.3s;
 }
 
-.sumario nav ul li a:hover {
+.sumario menu ul li a:hover {
     background-color: black;
     border-radius: 5px;
     color: white;
 }
 
-.category{
+.carrossel{
     display: flex;
     justify-content: center;
+    position: relative;
+    justify-content: flex-start;
     background-color: #e27d36;
     width: 100%;
     height: 150px;
     margin: 0px;
     box-sizing: border-box;
     text-align: center;
+    overflow-x: hidden;
     padding-left: 30px;
-    padding-right: 30px
+    padding-right: 30px;
+    scroll-behavior: smooth;
+}
+
+.carrossel-button{
+    background-color: #3C7785;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: absolute;
+    top: 50%; 
+    transform: translateY(-50%);
+    z-index: 2; 
+}
+
+.carrossel-button.voltar{
+    left: 0;
+}
+
+.carrossel-button.avancar{
+    right: 0;
 }
 
 .category-card{
-    flex: 1;
-    max-width: calc(100% / 6 - 20px);
+    flex: 0 0 calc(100% / 6 - 20px);
     position: relative;
     margin: auto;
     border: 1px solid #ccc;
@@ -218,6 +266,7 @@ main{
 .products{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5em;
     padding: 2em 5%;
     max-width: 1200px;
@@ -292,11 +341,10 @@ main{
 .infos{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     background-color: #3C7785;
     width: 100%;
-    height: 150px;
-    margin: 0px;
+    max-height: 130px;
     box-sizing: border-box;
     text-align: center; 
     color: white; 
@@ -305,10 +353,16 @@ main{
 
 .infos #chamado{
     color: black;
+    margin: 0 20px;
+    flex: 1;
+    flex-direction: column;
+    text-align: justify;
 }
 
 .infos #opcoes{
-    gap: 30px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .infos #opcoes #inputs{
@@ -325,7 +379,7 @@ main{
     padding: 10px;
     border-radius: 5px;
     border: none;
-    width: 100px;
+    width: 200px;
     height: 50px;
     cursor: pointer;
     background-color: #e27d36;
@@ -335,6 +389,45 @@ main{
 .infos #opcoes #button:hover{
     background-color: black;
     color: white;
+}
+
+.quem-somos{
+    padding: 2em 5%;
+    border-bottom: 1px solid #3C7785;
+}
+
+.onde-estamos{
+    padding: 2em 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: 30px;
+    max-height: 30%;
+    border-bottom: 1px solid #3C7785;
+}
+
+.onde-estamos h1{
+    align-self: flex-start;
+}
+
+.onde-estamos .onde-conteudo{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.onde-estamos #onde-texto{
+    max-width: 300px;
+    
+}
+
+.onde-estamos #iframe{
+    padding: 30px;
+}
+
+.contato{
+    padding: 2em 5%;
 }
 
 footer {
