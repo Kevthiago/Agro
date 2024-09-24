@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agropecuária Santos</title>
     <link rel="stylesheet" href="estilos/inicio.css">
-    <link rel="stylesheet" href="estilos/mediaquery.css">
+    <link rel="stylesheet" href="estilos/mediaqueryInicio.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body  onresize="mudouTamanho()">
@@ -18,18 +18,16 @@
                 <input type="text" placeholder="Buscar...">
                 <button id="buttonpesquisar" onclick="">Pesquisar</button>
             </div>
-            <!-- <nav id="cabecalho">
-                <ul>
-                    <li><a href="#">Entre</a></li>
-                    <li><a href="#">Cadastre-se</a></li>
-                </ul>
-            </nav> -->
             <div class="login-carrinho">
                 <div class="login" id="login">
-                    <img src="img/botao-de-login-do-usuario.png" alt="icone-login">
+                    <a href="login.html" id="button-image-login">
+                        <img src="img/botao-de-login-do-usuario.png" alt="icone-login" title="Login">
+                    </a>
                 </div>
                 <div class="carrinho" id="carrinho">
-                    <img src="img/carrinho-carrinho.png" alt="icone-carrinho">
+                    <a href="carrinho.html" id="button-image-carrinho">
+                        <img src="img/carrinho-carrinho.png" alt="icone-carrinho" title="Carrinho">
+                    </a>
                 </div>
             </div>
         </div>
@@ -266,7 +264,7 @@
         <div class="footer-content">
             <div class="footer-logo"><img src="img/ASlogo.png" alt="logo-empresa"></div>
             <div class="footer-links">
-                <p>Use Cases</p>
+                <p>Resumo</p>
                 <ul>
                     <li><a href="#">Alimentação Animal</a></li>
                     <li><a href="#">Medicina Veterinária</a></li>

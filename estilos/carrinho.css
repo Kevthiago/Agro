@@ -1,0 +1,214 @@
+@charset "UTF-8";
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body{
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url(../img/harvesting-wheat-tranquil-meadow-sunset-generated-by-ai.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.header{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: white;
+    border-bottom: 1px solid black;
+}
+
+.header nav ul{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.header nav ul li{
+    margin: 5px 0;
+}
+
+.header #button-voltar{
+    background-color: black;
+    color: white;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header #button-voltar:hover{
+    background-color: #3c7685;
+}
+
+.main{
+    background-color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    width: 80%;
+    height: calc(100vh - 50px - 85px);
+    text-align: center;
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding-top: 6rem;
+    gap: 20px;
+    border-radius: 1.25rem;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.main .carrinho{
+    flex: 1;
+    padding: 10px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.main .carrinho h1{
+    margin-bottom: 20px;
+}
+
+.main .itens-carrinho {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main .item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.main .detalhes-item{
+    display: flex;
+    align-items: center;
+}
+
+.main .detalhes-item img{
+    max-width: 80px;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.main .informacoes{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.main .informacoes input{
+    width: 80px;
+}
+
+.main .remover{
+    background-color: #e27d36;
+    width: 100px;
+}
+
+.main .resumo {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.main .resumo p {
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+.main .aside-left,.aside-right{
+    flex: 1;
+    padding: 10px;
+    max-width: 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.main label{
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.main input{
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.main button {
+    padding: 10px;
+    background-color: #3c7685;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 50%;  
+    margin: 0 auto;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main button:hover {
+    background-color: black;
+    color: white;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding: 0 20px;
+}
+
+.footer-content .footer-logo img{
+    flex: 1;
+    width: 80px;
+    height: auto;
+}
+
+.footer-content .footer-links {
+    margin-top: 10px;
+}
+
+.footer-content .footer-links p {
+    font-weight: bold;
+}
+
+.footer-content .footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-content .footer-links ul li {
+    margin: 5px 0;
+}
+
+.footer-content .footer-links ul li a {
+    text-decoration: none;
+    color: #fff;
+}

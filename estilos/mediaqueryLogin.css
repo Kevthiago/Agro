@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+@media (max-width: 992px){
+    .main{
+        flex-direction: column;
+        width: 80%;
+        height: auto;
+        padding: 2rem;
+    }
+
+    .main .aside-left, .aside-right{
+        max-width: 100%;
+    }
+}
