@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-@media (max-width: 992px){
+@media (max-width: 991px){
     .main{
         flex-direction: column;
         width: 80%;
@@ -11,4 +11,20 @@
     .main .aside-left, .aside-right{
         max-width: 100%;
     }
+}
+
+@media (min-width: 992px) and (max-width: 1200px){
+   .main{
+    width: 85%;
+    height: 100%;
+    padding: 4rem 2rem 6rem 2rem;
+   }
+
+   .main .aside-left, .aside-right{
+    max-width: 40%;
+   }
+
+   .main input, .main button{
+    width: 90%;
+   }
 }
