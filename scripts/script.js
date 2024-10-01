@@ -20,6 +20,16 @@ class Burguer {
     }
 }
 
+const menuBurguer = new Burguer();
+
+// Adicionar um evento de clique ao ícone do hambúrguer usando JavaScript
+document.getElementById('burguer').addEventListener('click', () => menuBurguer.clickMenu());
+
+// Adicionar evento de redimensionamento e carregamento da página
+window.onresize = () => menuBurguer.mudouTamanho();
+window.onload = () => menuBurguer.mudouTamanho();
+
+
 class Pagamento {
     constructor() {
         this.pagamentoSelect = document.getElementById('lista-pagamento');
@@ -49,12 +59,4 @@ class Pagamento {
 }
 
 const pagamento = new Pagamento();
-const menuBurguer = new Burguer();
-
-// Adicionar um evento de clique ao ícone do hambúrguer usando JavaScript
-document.getElementById('burguer').addEventListener('click', () => menuBurguer.clickMenu());
-
-// Adicionar evento de redimensionamento e carregamento da página
-window.onresize = () => menuBurguer.mudouTamanho();
-window.onload = () => menuBurguer.mudouTamanho();
 
