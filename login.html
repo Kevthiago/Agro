@@ -8,16 +8,34 @@
     <title>Login</title>
 </head>
 <body>
-    <header class="header">
-        <nav>
-            <ul>
-                <img src="img/agrosantos.png" alt="logo">
-                <a href="index.html">
-                    <button id="button-voltar">VOLTAR</button>
-                </a>
-            </ul>
-        </nav>
+    <header>
+        <div class="header" id="header">
+            <div class="logo" id="logoMarca">
+                <img src="img/agrosantos.png" alt="logo-empresa">
+            </div>
+            <div id="search">
+                <input type="text" placeholder="Buscar...">
+                <button id="buttonpesquisar" onclick="">Pesquisar</button>
+            </div>
+            <div class="login-carrinho">
+                <div class="login" id="login">
+                    <a href="login.html" id="button-image-login">
+                        <img src="img/botao-de-login-do-usuario.png" alt="icone-login" title="Login">
+                    </a>
+                </div>
+                <div class="carrinho" id="carrinho">
+                    <a href="carrinho.html" id="button-image-carrinho">
+                        <img src="img/carrinho-carrinho.png" alt="icone-carrinho" title="Carrinho">
+                    </a>
+                </div>
+            </div>
+        </div>
     </header>
+    <div class="voltar">
+        <a href="index.html">
+            <button id="button-voltar">VOLTAR</button>
+        </a>
+    </div>
     <main class="main">
         <aside-left class="aside-left">
             <h1>Login</h1>

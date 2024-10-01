@@ -1,6 +1,48 @@
 @charset "UTF-8";
 
 @media (max-width: 991px){
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #logoMarca, #search, #carrinho, #perfil {
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    #logoMarca{
+        text-align: center;
+        justify-content: center;
+    }
+
+    #search{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #search input {
+        width: 90%;
+        margin-bottom: 10px;
+    }
+
+    #search #buttonpesquisar {
+        width: 20%;
+        margin-bottom: 20px;
+    }
+
+    .login-carrinho{
+        gap: 60px;
+    }
+
+    #login{
+        margin: 0;
+    }
+
+    #carrinho{
+        margin: 0;
+    }
     .main{
         flex-direction: column;
         width: 80%;

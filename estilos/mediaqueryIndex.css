@@ -1,4 +1,4 @@
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 991px) {
     .header {
         flex-direction: column;
         align-items: center;
@@ -9,30 +9,39 @@
         text-align: center;
     }
 
+    #search {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
     #search input {
         width: 90%;
+        margin-bottom: 10px;
     }
 
     #search #buttonpesquisar {
-        width: 30%;
+        width: 20%;
+        margin-bottom: 20px;
     }
 
-    #carrinho, #perfil {
-        gap: 20px;
+    .login-carrinho {
+        gap: 60px;
     }
 
-    .category-card h2 .category-card p {
+    .category-card h2, .category-card p {
         font-size: 0.8em;
     }
 
     i#burguer {
         display: block;
     }
-    #itens{
+
+    #itens {
         display: none;
     }
 
-    .sumario{
+    .sumario {
         display: flex;
         flex-direction: column;
         padding: 0;
@@ -45,29 +54,21 @@
         padding: 0;
     }
 
-    .carrossel{
-        padding-left: 15px;
-        padding-right: 15px;
+    .carrossel {
+        padding: 0 15px;
         overflow: hidden;
         gap: 10px;
     }
 
     .category-card {
         flex: 0 0 calc(100% / 3 - 20px);
-        padding: 0.5em;
-        font-size: 0.9em;
         padding: 10px;
         gap: 10px;
-        height: 80%;
+        font-size: 0.9em;
     }
 
-    .carrossel-button{
+    .carrossel-button {
         padding: 5px 10px;
-    }
-
-    .sumario nav ul li a {
-        padding: 0.3em 0.5em;
-        font-size: 0.8em;
     }
 
     .product-card {
@@ -108,20 +109,18 @@
     }
 
     .infos #opcoes {
-        flex-direction: column; 
+        flex-direction: column;
         align-items: center;
-        gap: 10px; 
+        gap: 10px;
     }
 
-    .infos #opcoes #inputs {
-        font-size: 14px;
-        width: 80%;
-        height: 30px;
-    }
-
+    .infos #opcoes #inputs,
     .infos #opcoes #button {
         font-size: 14px;
         width: 80%;
+    }
+
+    .infos #opcoes #button {
         height: 40px;
     }
 
@@ -136,60 +135,40 @@
         padding: 15px;
     }
 
-    .footer-content .footer-logo img{
-        flex: 1;
+    .footer-content .footer-logo img {
         width: 80px;
         height: auto;
         padding: 10px;
     }
 }
 
-@media (min-width: 769px) and (max-width: 991px){
-    .infos #chamado {
-        font-size: 15px;
-    }
-
-    .infos #opcoes #inputs {
-        width: 100px;
-    }
-    .infos #opcoes #button {
-        width: 100px;
-        height: 40px;
-    }
-
-    .category-card {
-        flex: 0 0 calc(100% / 3 - 20px);
-    }
-    .products {
-        grid-template-columns: repeat(3, 1fr);
-        padding: 1em 2%;
-    }
-}
-
-@media (min-width: 992px) and (max-width: 1200px){
+@media (min-width: 992px) and (max-width: 1200px) {
     .infos #chamado {
         font-size: 12px;
         margin-bottom: 5px;
     }
 
-    .infos #opcoes #inputs{
+    .infos #opcoes #inputs {
         font-size: 15px;
         padding: 10px;
-        border-radius: 5px;
-        border: none;
         width: 150px;
         height: 30px;
     }
-    
-    .infos #opcoes #button{
+
+    .infos #opcoes #button {
         font-size: 15px;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
         width: 150px;
         height: 50px;
-        cursor: pointer;
         background-color: #e27d36;
         color: white;
+    }
+
+    .category-card {
+        flex: 0 0 calc(100% / 3 - 20px);
+    }
+
+    .products {
+        grid-template-columns: repeat(3, 1fr);
+        padding: 1em 2%;
     }
 }

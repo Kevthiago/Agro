@@ -9,33 +9,99 @@
 html, body{
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url(../img/harvesting-wheat-tranquil-meadow-sunset-generated-by-ai.jpg);
+    background-image: url(../img/plantacao.jpg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
 
-.header{
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+header {
     background-color: white;
-    border-bottom: 1px solid black;
+    border-bottom: 1px black;
+    padding: 1em 2em;
 }
 
-.header nav ul{
+.header {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 15px;
+    justify-content: space-around;
+    width: 100%;
 }
 
-.header nav ul li{
-    margin: 5px 0;
+#logoMarca {
+    flex: 1;
 }
 
-.header #button-voltar{
+#logoMarca img {
+    width: auto;
+    height: 50px;
+}
+
+#search {
+    flex: 2;
+    display: flex;
+    align-items: center;
+}
+
+#search input {
+    width: 80%;
+    padding: 0.5em 1em;
+    border: 1px solid black;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+#search #buttonpesquisar {
+    position: relative;
+    padding: 0.5em 1em;
+    border: 1px solid black;
+    border-radius: 20px;
+    background-color: #fff;
+    cursor: pointer;
+    background-color: #3C7785;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#search #buttonpesquisar:hover {
+    background-color: black;
+    border: 1px solid black;
+    color: white;
+}
+
+#carrinho {
+    flex: 1;
+    text-align: right;
+    margin-right: 30px;
+}
+
+#carrinho img {
+    width: 40px;
+    height: auto;
+}
+
+#login{
+    flex: 1;
+    text-align: right;
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+#login img {
+    width: 40px;
+    height: auto;
+}
+
+.login-carrinho{
+    display: flex;
+    align-items: center;
+}
+
+.voltar{
+    padding: 10px;
+}
+
+.voltar #button-voltar{
     background-color: black;
     color: white;
     padding: 8px;
@@ -45,7 +111,7 @@ html, body{
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.header #button-voltar:hover{
+ #button-voltar:hover{
     background-color: #3c7685;
 }
 
@@ -138,7 +204,7 @@ html, body{
 .main .aside-left,.aside-right{
     flex: 1;
     padding: 10px;
-    max-width: 45%;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     gap: 15px;

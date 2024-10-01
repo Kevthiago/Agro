@@ -12,7 +12,7 @@ body{
 
 header {
     background-color: white;
-    border-bottom: 1px black;
+    border-bottom: 1px solid black;
     padding: 1em 2em;
 }
 
@@ -20,7 +20,6 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    width: 100%;
 }
 
 #logoMarca {
@@ -28,8 +27,8 @@ header {
 }
 
 #logoMarca img {
-    width: 80px;
-    height: auto;
+    width: auto;
+    height: 50px;
 }
 
 #search {
@@ -66,7 +65,6 @@ header {
 #carrinho {
     flex: 1;
     text-align: right;
-    margin-right: 30px;
 }
 
 #carrinho img {
@@ -77,7 +75,6 @@ header {
 #login{
     flex: 1;
     text-align: right;
-    margin-right: 30px;
     margin-left: 30px;
 }
 
@@ -89,6 +86,7 @@ header {
 .login-carrinho{
     display: flex;
     align-items: center;
+    gap: 30px;
 }
 
 i#burguer{
@@ -126,7 +124,6 @@ i#burguer:hover{
 }
 
 #cabecalho ul li a:hover {
-    text-decoration: none;
     color: #abd1c6;
 }
 
@@ -160,7 +157,7 @@ i#burguer:hover{
     color: white;
 }
 
-.carrossel{
+.carrossel, .carrossel-marcas{
     display: flex;
     justify-content: center;
     position: relative;
@@ -237,27 +234,27 @@ i#burguer:hover{
 }
 
 #img1::before {
-    background-image: url('../img/pexels-wildlittlethingsphoto-2253275.jpg');
+    background-image: url('../img/cachorro.jpg');
 }
 
 #img2::before {
-    background-image: url('../img/pexels-wildlittlethingsphoto-1996332.jpg');
+    background-image: url('../img/cavalo.jpg');
 }
 
 #img3::before {
-    background-image: url('../img/pexels-ihsanaditya-1056251.jpg');
+    background-image: url('../img/gato.jpg');
 }
 
 #img4::before {
-    background-image: url('../img/pexels-raulkingr-703995.jpg');
+    background-image: url('../img/casal.jpg');
 }
 
 #img5::before {
-    background-image: url('../img/pexels-leigh-patrick-14477-298246.jpg');
+    background-image: url('../img/flores.jpg');
 }
 
 #img6::before {
-    background-image: url('../img/pexels-energepic-com-27411-175039.jpg');
+    background-image: url('../img/ferramentas.jpg');
 }
 
 main{
@@ -270,7 +267,6 @@ main{
 .products{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-template-columns: repeat(4, 1fr);
     gap: 1.5em;
     padding: 2em 5%;
     max-width: 1200px;
@@ -342,23 +338,6 @@ main{
     color: white;
 }
 
-.carrossel-marcas{
-    display: flex;
-    justify-content: center;
-    position: relative;
-    justify-content: flex-start;
-    background-color: #e27d36;
-    width: 100%;
-    height: 150px;
-    margin: 0px;
-    box-sizing: border-box;
-    text-align: center;
-    overflow-x: hidden;
-    padding-left: 30px;
-    padding-right: 30px;
-    scroll-behavior: smooth;
-}
-
 .marcas-button{
     background-color: #3C7785;
     color: white;
@@ -387,8 +366,8 @@ main{
     margin: auto;
     padding: 1em;
     border-radius: 5px;
-    height: 80%;
-    width: 100vh;
+    height: auto;
+    width: 100%;
     transition-duration: 0.7s;
     z-index: 1;
     color: #333;
@@ -491,6 +470,11 @@ main{
 
 .contato{
     padding: 2em 5%;
+}
+
+.contato img{
+    height: 50px;
+    width: auto;
 }
 
 footer {
