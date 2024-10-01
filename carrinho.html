@@ -119,15 +119,19 @@
                     <label for="codigo-cartao">Código de Segurança:</label>
                     <input type="number" id="codCartao" name="codCartao">
                     <label for="validade-cartao">Validade:</label>
-                    <input type="date" id="valCartao" name="valCartao">
+                    <input type="month" id="valCartao" name="valCartao">
                 </div>
                 <div id="boleto-detalhes">
                     <label for="codBarra">Código de barra:</label>
-                    <input type="text" id="codBarra" name="codBarra">
+                    <p>00000.11111.222222.33333.444444 5 66666666666</p>
+                    <label for="validadeBoleto">Validade:</label>
+                    <p>Três dias úteis</p>
                 </div>
                 <div id="pix-detalhes">
                     <label for="chavePix">Chave pix:</label>
-                    <input type="text" id="chavePix" name="chavePix">
+                    <p>CNPJ - 11237212000103</p>
+                    <label for="qrCode">QR Code</label>
+                    <img src="/img/qrcode.jpeg" alt="QR Code Pix">
                 </div>
                 <button id="finalizar-button">Finalizar Compra</button>
             </div>            
@@ -165,5 +169,6 @@
             </div>
         </div>
     </footer>
+    <script src="scripts/script.js"></script>
 </body>
 </html>

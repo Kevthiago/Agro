@@ -29,6 +29,10 @@
         gap: 60px;
     }
 
+    #login{
+        margin-left: 0;
+    }
+
     .category-card h2, .category-card p {
         font-size: 0.8em;
     }
@@ -48,10 +52,9 @@
     }
 
     .sumario menu ul {
+        display: flex;
         flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        padding: 0;
+        text-align: center;
     }
 
     .carrossel {
@@ -68,7 +71,7 @@
     }
 
     .carrossel-button {
-        padding: 5px 10px;
+        padding: 3px;
     }
 
     .product-card {
@@ -95,6 +98,10 @@
     .products {
         grid-template-columns: repeat(2, 1fr);
         padding: 1em 2%;
+    }
+
+    .marcas-button{
+        padding: 3px;
     }
 
     .infos {

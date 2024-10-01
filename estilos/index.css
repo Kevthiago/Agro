@@ -105,28 +105,6 @@ i#burguer:hover{
     color: #3C7785;
 }
 
-#cabecalho {
-    flex: 1;
-    display: flex;
-}
-
-#cabecalho ul {
-    list-style-type: none;
-    display: flex;
-    gap: 20px;
-    margin: 0;
-    padding: 0;
-}
-
-#cabecalho ul li a {
-    text-decoration: none;
-    color: #333;
-}
-
-#cabecalho ul li a:hover {
-    color: #abd1c6;
-}
-
 .sumario{
     display: flex;
     width: 100%;
@@ -178,7 +156,7 @@ i#burguer:hover{
     background-color: #3C7785;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 5px;
     cursor: pointer;
     position: absolute;
     top: 50%; 
@@ -342,7 +320,7 @@ main{
     background-color: #3C7785;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 5px;
     cursor: pointer;
     position: absolute;
     top: 50%; 

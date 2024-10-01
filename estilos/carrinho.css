@@ -229,6 +229,36 @@ header {
     margin-bottom: 10px;
 }
 
+.main .detalhes-pagamento div{
+    display: none;
+}
+
+.main .detalhes-pagamento #boleto-detalhes p{
+    width: 100%;
+    padding: 10px;
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.main .detalhes-pagamento #pix-detalhes{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main .detalhes-pagamento #pix-detalhes p{
+    width: 100%;
+    padding: 10px;
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.main .detalhes-pagamento #pix-detalhes img{
+    display: block;
+    width: 150px;
+    margin-top: 10px;    
+}
+
 .main button {
     padding: 10px;
     background-color: #3c7685;
