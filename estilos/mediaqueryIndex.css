@@ -92,7 +92,8 @@
     }
 
     .adicionarCarrinho {
-        height: 25px;
+        align-items: center;
+        height: 50px;
     }
 
     .products {
