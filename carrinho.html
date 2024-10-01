@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
         <nav>
             <ul>
                 <img src="img/agrosantos.png" alt="logo">
-                <a href="inicio.html">
+                <a href="index.html">
                     <button id="button-voltar">VOLTAR</button>
                 </a>
             </ul>
@@ -66,7 +66,7 @@
                 <button id="finalizar-compra">Finalizar Compra</button>
             </div>
         </div>
-        <aside-left class="aside-left">
+        <aside class="aside-left">
             <h1>Endereço</h1>
             <label for="cep">CEP:</label>
             <input type="text" id="cep" name="cep">
@@ -81,19 +81,39 @@
             <label for="complemento">Complemento:</label>
             <input type="text" id="complemento" name="complemento">
             <button id="login-button">Salvar</button>
-        </aside-left>
-        <aside-right class="aside-right">
+        </aside>
+        <aside class="aside-right">
             <h1>Pagamento</h1>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome">
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf">
-            <label for="email">Email:</label>
-            <input type="text" id="email" name="email">
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha">
-            <button id="create-button">Finalizar Pagamento</button>
-        </aside-right>
+            <label for="pagamento">Escolha uma forma de pagamento:</label>
+            <select id="lista-pagamento">
+                <option value="">Escolher...</option>
+                <option value="cartao_credito">Cartão de Crédito</option>
+                <option value="cartao_debito">Cartão de Débito</option>
+                <option value="boleto">Boleto Bancário</option>
+                <option value="pix">Pix</option>
+            </select>
+            <div class="detalhes-pagamento">
+                <div id="cartao-detalhes">
+                    <label for="nome-cartao">Nome impresso no Cartão:</label>
+                    <input type="text" id="nome" name="nome">
+                    <label for="numero-cartao">Número do Cartão:</label>
+                    <input type="number" id="numCartao" name="numCartao">
+                    <label for="codigo-cartao">Código de Segurança:</label>
+                    <input type="number" id="codCartao" name="codCartao">
+                    <label for="validade-cartao">Validade:</label>
+                    <input type="date" id="valCartao" name="valCartao">
+                </div>
+                <div id="boleto-detalhes">
+                    <label for="codBarra">Código de barra:</label>
+                    <input type="text" id="codBarra" name="codBarra">
+                </div>
+                <div id="pix-detalhes">
+                    <label for="chavePix">Chave pix:</label>
+                    <input type="text" id="chavePix" name="chavePix">
+                </div>
+                <button id="finalizar-button">Finalizar Compra</button>
+            </div>            
+        </aside>
     </main>
     <footer>
         <div class="footer-content">

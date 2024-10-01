@@ -144,15 +144,23 @@ html, body{
     gap: 15px;
 }
 
+.main .aside-right #lista-pagamento{
+    padding: 10px;
+}
+
 .main label{
     text-align: left;
     margin-bottom: 5px;
 }
 
 .main input{
-    padding: 5px;
+    padding: 10px;
     width: 100%;
     box-sizing: border-box;
+}
+
+.main .detalhes-pagamento input{
+    margin-bottom: 10px;
 }
 
 .main button {
@@ -170,6 +178,10 @@ html, body{
 .main button:hover {
     background-color: black;
     color: white;
+}
+
+.main #finalizar-button{
+    margin-top: 10px;
 }
 
 footer {

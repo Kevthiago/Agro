@@ -55,7 +55,7 @@ html, body{
     justify-content: center;
     align-items: top;
     width: 80%;
-    height: calc(100vh - 50px - 85px);
+    height: 100%;
     text-align: center;
     margin: auto;
     margin-top: 40px;

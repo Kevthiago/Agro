@@ -342,6 +342,65 @@ main{
     color: white;
 }
 
+.carrossel-marcas{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    justify-content: flex-start;
+    background-color: #e27d36;
+    width: 100%;
+    height: 150px;
+    margin: 0px;
+    box-sizing: border-box;
+    text-align: center;
+    overflow-x: hidden;
+    padding-left: 30px;
+    padding-right: 30px;
+    scroll-behavior: smooth;
+}
+
+.marcas-button{
+    background-color: #3C7785;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: absolute;
+    top: 50%; 
+    transform: translateY(-50%);
+    z-index: 2; 
+}
+
+.marcas-button.voltar{
+    left: 0;
+}
+
+.marcas-button.avancar{
+    right: 0;
+}
+
+.marca-card{
+    display: flex;
+    align-items: center;
+    flex: 0 0 calc(100% / 6 - 20px);
+    position: relative;
+    margin: auto;
+    padding: 1em;
+    border-radius: 5px;
+    height: 80%;
+    width: 100vh;
+    transition-duration: 0.7s;
+    z-index: 1;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.marca-card img{
+    width: 5em;
+    height: 5em;
+    border-radius: 100%;
+}
+
 .infos{
     display: flex;
     align-items: center;
