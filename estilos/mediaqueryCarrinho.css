@@ -16,7 +16,7 @@
         justify-content: center;
     }
 
-    #search{
+    #search {
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -28,7 +28,7 @@
     }
 
     #search #buttonpesquisar {
-        width: 20%;
+        width: 30%;
         margin-bottom: 20px;
     }
 
