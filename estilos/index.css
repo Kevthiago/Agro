@@ -316,6 +316,12 @@ main{
     color: white;
 }
 
+.carrossel-marcas .marca-card{
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
 .marcas-button{
     background-color: #3C7785;
     color: white;

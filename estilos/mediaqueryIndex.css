@@ -173,6 +173,7 @@
 
     .category-card {
         flex: 0 0 calc(100% / 3 - 20px);
+        width: 10px;
     }
 
     .products {
