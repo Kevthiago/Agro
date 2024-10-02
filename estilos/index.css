@@ -262,8 +262,9 @@ main{
 }
 
 .product-card img {
-    max-width: 150px;
-    height: auto;
+    width: auto;
+    max-width: 100%;
+    height: 150px;
     border-radius: 5px;
     margin-bottom: 1em;
 }
@@ -359,9 +360,11 @@ main{
 }
 
 .marca-card img{
-    width: 5em;
-    height: 5em;
-    border-radius: 100%;
+    padding: 10px;
+    width: 150px;
+    height: 75px;
+    border-radius: 10px;
+    background-color: white;
 }
 
 .infos{

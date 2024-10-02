@@ -80,7 +80,8 @@
     }
 
     .product-card img {
-        max-width: 100px;
+        width: 80%;
+        height: 150px;
     }
 
     .product-quantidade input[type="number"] {
