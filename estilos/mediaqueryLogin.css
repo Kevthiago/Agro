@@ -54,6 +54,11 @@
     .main .aside-left, .aside-right{
         max-width: 100%;
     }
+    .footer-content .footer-logo img {
+        width: 80px;
+        height: auto;
+        padding: 10px;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1200px){
