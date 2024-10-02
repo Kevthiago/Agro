@@ -242,6 +242,7 @@ header {
 
 .main .detalhes-pagamento #pix-detalhes{
     display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
 }
