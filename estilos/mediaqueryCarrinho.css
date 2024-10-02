@@ -8,11 +8,11 @@
     .main .informacoes input{
         width: 50px;
     }
-    
-    .main .remover{
+
+    .main .detalhes-pagamento .boleto-detalhes #codBarra{
         font-size: 0.5em;
-        width: 20%;
     }
+
 }
 
 @media (max-width: 991px){
@@ -68,7 +68,8 @@
     .main .aside-left, .aside-right{
         max-width: 100%;
     }
-    .footer-content .footer-logo img {
+
+    .footer-principal .footer-content .footer-logo img {
         width: 80px;
         height: auto;
         padding: 10px;

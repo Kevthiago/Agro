@@ -54,7 +54,12 @@
     .main .aside-left, .aside-right{
         max-width: 100%;
     }
-    .footer-content .footer-logo img {
+
+    .main input{
+        width: 100%;
+    }
+
+    .footer-principal .footer-content .footer-logo img {
         width: 80px;
         height: auto;
         padding: 10px;
@@ -72,7 +77,7 @@
     max-width: 40%;
    }
 
-   .main input, .main button{
+   .main input{
     width: 90%;
    }
 }

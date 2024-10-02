@@ -50,7 +50,7 @@
                                 <p>Quantidade: <input type="number" value="1" min="1"></p>
                             </div>
                         </div>
-                        <button class="remover">Remover</button>
+                        <button class="remover">X</button>
                     </li>
                     <li class="item">
                         <div class="detalhes-item">
@@ -61,7 +61,7 @@
                                 <p>Quantidade: <input type="number" value="1" min="1"></p>
                             </div>
                         </div>
-                        <button class="remover">Remover</button>
+                        <button class="remover">X</button>
                     </li>
                     <li class="item">
                         <div class="detalhes-item">
@@ -72,7 +72,7 @@
                                 <p>Quantidade: <input type="number" value="1" min="1"></p>
                             </div>
                         </div>
-                        <button class="remover">Remover</button>
+                        <button class="remover">X</button>
                     </li>
                 </ul>
             </div>
@@ -85,20 +85,22 @@
             </div>
         </div>
         <aside class="aside-left">
-            <h1>Endereço</h1>
+        <h1>Endereço</h1>
+        <form action="/endereco" method="post">
             <label for="cep">CEP:</label>
-            <input type="text" id="cep" name="cep">
+            <input type="text" id="cep" name="cep" required>
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade">
+            <input type="text" id="cidade" name="cidade" required>
             <label for="estado">Estado:</label>
-            <input type="text" id="estado" name="estado">
+            <input type="text" id="estado" name="estado" required>
             <label for="rua">Rua:</label>
-            <input type="text" id="rua" name="rua">
+            <input type="text" id="rua" name="rua" required>
             <label for="numero">Número:</label>
-            <input type="text" id="numero" name="numero">
+            <input type="text" id="numero" name="numero" required>
             <label for="complemento">Complemento:</label>
-            <input type="text" id="complemento" name="complemento">
+            <input type="text" id="complemento" name="complemento" required>
             <button id="login-button">Salvar</button>
+        </form>
         </aside>
         <aside class="aside-right">
             <h1>Pagamento</h1>
@@ -112,18 +114,20 @@
             </select>
             <div class="detalhes-pagamento">
                 <div id="cartao-detalhes">
+                    <form action="/dados-cartao" method="post">
                     <label for="nome-cartao">Nome impresso no Cartão:</label>
-                    <input type="text" id="nome" name="nome">
+                    <input type="text" id="nome" name="nome" required>
                     <label for="numero-cartao">Número do Cartão:</label>
-                    <input type="number" id="numCartao" name="numCartao">
+                    <input type="number" id="numCartao" name="numCartao" required>
                     <label for="codigo-cartao">Código de Segurança:</label>
-                    <input type="number" id="codCartao" name="codCartao">
+                    <input type="number" id="codCartao" name="codCartao" required>
                     <label for="validade-cartao">Validade:</label>
-                    <input type="month" id="valCartao" name="valCartao">
+                    <input type="month" id="valCartao" name="valCartao" required>
+                </form>
                 </div>
                 <div id="boleto-detalhes">
                     <label for="codBarra">Código de barra:</label>
-                    <p>00000.11111.222222.33333.444444 5 66666666666</p>
+                    <p id="codBarra">00000.11111.222222.33333.444444 5 66666666666</p>
                     <label for="validadeBoleto">Validade:</label>
                     <p>Três dias úteis</p>
                 </div>
@@ -137,7 +141,7 @@
             </div>            
         </aside>
     </main>
-    <footer>
+    <footer class="footer-principal">
         <div class="footer-content">
             <div class="footer-logo"><img src="img/ASlogo.png" alt="logo-empresa"></div>
             <div class="footer-links">
@@ -168,6 +172,9 @@
                 </ul>
             </div>
         </div>
+    </footer>
+    <footer class="footer-legal">
+        <p>Agropecuária Santos LTDA | CNPJ: 11.237.212/0001.03</p>
     </footer>
     <script src="scripts/pagamento.js"></script>
 </body>
