@@ -34,24 +34,30 @@ Este é um **projeto acadêmico** de site institucional fictício para a *Agrope
 | [Login/Cadastro](https://kevthiago.github.io/Agro/login.html) | Simulação de login e cadastro de usuário. |
 | [Carrinho de Compras](https://kevthiago.github.io/Agro/carrinho.html) | Visualização do carrinho, endereço, resumo do pedido e simulação de pagamento. |
 
-📸 **Sugestão:** adicione prints das principais páginas aqui, por exemplo:
+---
 
-```markdown
-### 🖼️ Tela Inicial
+## 🖼️ Prints da Aplicação
 
+### Tela Inicial
 ![Tela inicial](img/prints/inicio.png)
 
-### 🖼️ Tela de Login
+### Seção "Quem Somos"
+![Quem somos](img/prints/quem.png)
 
-![Tela de login](assets/prints/login.png)
+### Tela de Login
+![Tela de login](img/prints/login.png)
 
-### 🖼️ Tela de Carrinho
+### Tela do Carrinho
+![Tela do carrinho](img/prints/carrinho.png)
 
-![Tela do carrinho](assets/prints/carrinho.png)
+---
 
-### 📸 Estrutura do Projeto no VS Code
+## 📁 Estrutura do Projeto no VS Code
 
-![Estrutura de arquivos](assets/prints/estrutura-vscode.png)
+> 📸 Adicione aqui uma imagem com a estrutura de arquivos no VS Code (ex: `img/prints/estrutura-vscode.png`)
+
+```markdown
+![Estrutura de arquivos](img/prints/estrutura-vscode.png)
 
 ---
 
@@ -66,7 +72,7 @@ Este é um **projeto acadêmico** de site institucional fictício para a *Agrope
 
 ## 📚 Contexto Acadêmico
 
-Este projeto foi desenvolvido como parte de um **trabalho de faculdade**, com o intuito de aplicar conhecimentos introdutórios de desenvolvimento web.  
+Este projeto foi desenvolvido como parte de um trabalho da faculdade de Ciência da Computação, pela disciplina de Programação Web, com o intuito de aplicar conhecimentos introdutórios de desenvolvimento web.  
 Nenhuma funcionalidade de backend foi implementada — o site é totalmente estático e voltado à prática de **HTML**, **CSS** e um pouco de **JavaScript**.
 
 ---
@@ -75,7 +81,6 @@ Nenhuma funcionalidade de backend foi implementada — o site é totalmente est�
 
 **Kevin Thiago**  
 Estudante de Ciência da Computação – 5º período  
-📧 *Contato: (você pode inserir seu e-mail ou LinkedIn aqui, se quiser)*
 
 ---
 
