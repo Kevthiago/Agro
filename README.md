@@ -39,7 +39,7 @@ Este é um **projeto acadêmico** de site institucional fictício para a *Agrope
 ```markdown
 ### 🖼️ Tela Inicial
 
-![Tela inicial](assets/prints/home.png)
+![Tela inicial](img/prints/inicio.png)
 
 ### 🖼️ Tela de Login
 
