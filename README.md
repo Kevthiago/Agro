@@ -56,8 +56,6 @@ Este é um **projeto acadêmico** de site institucional fictício para a *Agrope
 
 ## 📁 Estrutura do Projeto no VS Code
 
-> 📸 Adicione aqui uma imagem com a estrutura de arquivos (ex: `img/prints/estrutura.png`)
-
 ![Estrutura de arquivos](img/prints/estrutura.png)
 
 ---
