@@ -9,7 +9,11 @@
     "preview": "astro preview",
     "test": "vitest run",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db"
   },
   "dependencies": {
     "@astrojs/preact": "6.1.1",
@@ -25,6 +29,7 @@
     "globals": "17.13.0",
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.1",
+    "supabase": "2.121.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.0",
     "vitest": "5.0.5"
