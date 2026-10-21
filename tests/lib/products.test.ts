@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { CATEGORIES } from "@/config/categories";
 import { getPublishedProducts, groupByCategory, mapRow } from "@/lib/products";
 import type { Product, ProductRow } from "@/lib/types";
 
@@ -49,7 +50,7 @@ describe("groupByCategory", () => {
     const g = groupByCategory([{ category: "pets" } as Product]);
     expect(g.pets).toHaveLength(1);
     expect(g.jardinagem).toEqual([]);
-    expect(Object.keys(g)).toHaveLength(6);
+    expect(Object.keys(g)).toEqual(CATEGORIES.map((c) => c.slug));
   });
 });
 
@@ -58,6 +59,18 @@ describe("getPublishedProducts", () => {
     const client = fakeClient({ data: null, error: { message: "boom" } });
     await expect(getPublishedProducts({ client, env })).rejects.toThrow(
       /^Falha ao carregar produtos do Supabase/,
+    );
+  });
+
+  it("rejeita quando data é null sem erro", async () => {
+    const client = fakeClient({ data: null, error: null });
+    await expect(getPublishedProducts({ client, env })).rejects.toThrow(/resposta sem dados/);
+  });
+
+  it("rejeita quando não há produtos publicados", async () => {
+    const client = fakeClient({ data: [], error: null });
+    await expect(getPublishedProducts({ client, env })).rejects.toThrow(
+      /nenhum produto publicado encontrado/,
     );
   });
 

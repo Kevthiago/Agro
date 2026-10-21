@@ -83,6 +83,16 @@ export async function getPublishedProducts(options: GetProductsOptions = {}): Pr
   const { data, error } = await client.from("products").select("*").eq("published", true);
   if (error) throw new Error(`Falha ao carregar produtos do Supabase: ${error.message}`);
 
+  if (data == null) {
+    throw new Error("Falha ao carregar produtos do Supabase: resposta sem dados");
+  }
+  // Catálogo vazio nunca é publicado: o build falha e o site anterior continua no ar (comportamento seguro).
+  if (data.length === 0) {
+    throw new Error(
+      "Falha ao carregar produtos do Supabase: nenhum produto publicado encontrado (confira o banco e as regras RLS)",
+    );
+  }
+
   const base = url ?? "";
   const publicUrl = (path: string) => `${base}/storage/v1/object/public/${BUCKET}/${path}`;
   return sortProducts((data as ProductRow[]).map((r) => mapRow(r, publicUrl)));
