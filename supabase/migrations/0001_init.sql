@@ -75,9 +75,15 @@ grant select on table public.editors to authenticated;
 --     sub do token (auth.uid()) e que esse e-mail esteja confirmado
 --     (email_confirmed_at não nulo). O JWT do Supabase não traz uma claim
 --     confiável de "e-mail verificado" no nível de cima, então a fonte da
---     verdade é auth.users. Isso impede que alguém crie conta com o e-mail de um
---     editor sem confirmar (caso a confirmação esteja desligada no projeto) e
---     faz um usuário apagado perder o acesso mesmo com token ainda válido.
+--     verdade é auth.users. Isso faz um usuário apagado perder o acesso mesmo
+--     com token ainda válido, e impede que alguém use o e-mail de um editor
+--     sem provar que é dono dele.
+--     ATENÇÃO: essa proteção só vale com "Confirm email" LIGADO no projeto
+--     hospedado (Authentication > Providers > Email). Com ele desligado, o
+--     Supabase preenche email_confirmed_at já no cadastro, e qualquer pessoa
+--     que crie conta com o e-mail de um editor vira editor. Nunca desligue.
+--     Recomendado também: depois de cadastrar os editores, desligar "Allow new
+--     users to sign up" e passar a convidar editores (acesso só por convite).
 --     Login com Google preenche email_confirmed_at automaticamente.
 --   * Só authenticated pode executá-la. As políticas de anon não a chamam.
 -- ---------------------------------------------------------------------------
