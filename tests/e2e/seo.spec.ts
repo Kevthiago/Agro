@@ -96,6 +96,12 @@ test("endereço inexistente mostra a página 404 do site", async ({ page }) => {
   await expect(page.getByRole("main").locator('a[href^="https://wa.me/"]')).toBeVisible();
 });
 
+test("a 404 fica fora dos buscadores e sem endereço canônico", async ({ page }) => {
+  await page.goto("/404.html");
+  await expect(page.locator('meta[name="robots"][content="noindex"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+});
+
 for (const [name, id] of [
   ["Quem Somos", "quem-somos"],
   ["Onde Estamos", "onde-estamos"],
