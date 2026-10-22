@@ -7,15 +7,17 @@ import type { Product } from "@/lib/types";
 interface Props {
   products: Product[];
   emptyMessage?: string;
+  /** Marca cada item com `data-index` para a busca do catálogo esconder/mostrar. */
+  searchable?: boolean;
 }
 
-const { products, emptyMessage = "Ainda não temos itens aqui." } = Astro.props;
+const { products, emptyMessage = "Ainda não temos itens aqui.", searchable = false } = Astro.props;
 ---
 
 {products.length > 0 ? (
   <ul class="prateleira">
-    {products.map((product) => (
-      <li>
+    {products.map((product, index) => (
+      <li data-index={searchable ? index : undefined}>
         <ProductItem product={product} />
       </li>
     ))}

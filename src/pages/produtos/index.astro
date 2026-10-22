@@ -1,0 +1,65 @@
+---
+import CatalogPage from "@/components/CatalogPage.astro";
+import Prateleira from "@/components/Prateleira.astro";
+import CatalogSearch from "@/components/CatalogSearch";
+import { getPublishedProducts } from "@/lib/products";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+
+const products = await getPublishedProducts();
+// Para a ilha, só o que a busca lê.
+const searchItems = products.map(({ name, description }) => ({ name, description }));
+---
+
+<CatalogPage
+  title="Produtos"
+  description="Catálogo da Agropecuária Santos: ração, farmácia veterinária, ferramentas, pets e jardinagem. Peça pelo WhatsApp."
+  heading="Produtos"
+>
+  <CatalogSearch slot="busca" client:load items={searchItems} whatsappHref={buildWhatsAppLink()} />
+  <Prateleira products={products} searchable />
+</CatalogPage>
+
+<style is:global>
+  /* a ilha Preact não passa pelo escopo do Astro */
+  .busca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .busca label {
+    flex-basis: 100%;
+    font-weight: 700;
+  }
+
+  .busca input {
+    flex: 1 1 16rem;
+    max-width: 26rem;
+    padding: 0.625rem 0.875rem;
+    border: 2px solid var(--color-petroleo-escuro);
+    background: #fff;
+    color: var(--color-tinta);
+    font: inherit;
+  }
+
+  .busca-status {
+    font-size: 0.9375rem;
+    color: var(--color-petroleo-escuro);
+  }
+
+  .busca-whats {
+    padding: 0.5rem 0.875rem;
+    background: var(--color-petroleo);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .busca-whats:hover,
+  .busca-whats:focus-visible {
+    background: var(--color-laranja);
+    color: var(--color-tinta);
+  }
+</style>

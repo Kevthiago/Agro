@@ -1,0 +1,62 @@
+---
+import { CATEGORIES } from "@/config/categories";
+
+interface Props {
+  /** Slug da categoria atual; ausente na página "Todos". */
+  current?: string;
+}
+
+const { current } = Astro.props;
+const links = [
+  { href: "/produtos", label: "Todos", active: current === undefined },
+  ...CATEGORIES.map((c) => ({
+    href: `/produtos/${c.slug}`,
+    label: c.label,
+    active: c.slug === current,
+  })),
+];
+---
+
+<nav aria-label="Categorias">
+  <ul>
+    {links.map(({ href, label, active }) => (
+      <li>
+        <a href={href} aria-current={active ? "page" : undefined}>{label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: block;
+    padding: 0.5rem 0.875rem;
+    border: 2px solid var(--color-petroleo-escuro);
+    color: var(--color-petroleo-escuro);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  a:hover {
+    background: var(--color-laranja);
+    border-color: var(--color-laranja);
+    color: var(--color-tinta);
+  }
+
+  a[aria-current="page"] {
+    background: var(--color-petroleo-escuro);
+    color: var(--color-palha);
+  }
+</style>

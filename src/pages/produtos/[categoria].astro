@@ -1,0 +1,27 @@
+---
+import CatalogPage from "@/components/CatalogPage.astro";
+import Prateleira from "@/components/Prateleira.astro";
+import { CATEGORIES } from "@/config/categories";
+import { site } from "@/config/site";
+import { getPublishedProducts, groupByCategory } from "@/lib/products";
+
+// Todas as seis categorias viram página, mesmo vazias.
+export function getStaticPaths() {
+  return CATEGORIES.map((category) => ({
+    params: { categoria: category.slug },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const products = groupByCategory(await getPublishedProducts())[category.slug];
+---
+
+<CatalogPage
+  title={`${category.label} — ${site.name}`}
+  description={`${category.label} na ${site.name}, em Desterro de Entre Rios, MG. Peça pelo WhatsApp.`}
+  heading={category.label}
+  current={category.slug}
+>
+  <Prateleira products={products} emptyMessage="Ainda não temos itens aqui." />
+</CatalogPage>
