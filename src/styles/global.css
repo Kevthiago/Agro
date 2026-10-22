@@ -1,1 +1,73 @@
 @import "tailwindcss";
+
+/* Fontes hospedadas no próprio site (Fontsource, só o subconjunto latino,
+   que cobre o português). Nenhuma requisição a servidores de terceiros. */
+@import "@fontsource/big-shoulders-display/latin-900";
+@import "@fontsource/figtree/latin-400";
+@import "@fontsource/figtree/latin-600";
+@import "@fontsource/figtree/latin-700";
+
+/* Direção "Balcão". "static" garante as variáveis no :root para os <style> dos componentes. */
+@theme static {
+  --color-petroleo: #3c7785;
+  --color-petroleo-escuro: #1f4752;
+  --color-laranja: #e27d36;
+  --color-tinta: #12262c;
+  --color-palha: #edefe6;
+  --color-madeira: #5a4630;
+
+  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --font-sans: "Figtree", system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* Cor do anel de foco: escura em fundo claro; superfícies escuras trocam com .superficie-escura */
+    --foco: var(--color-petroleo-escuro);
+  }
+
+  .superficie-escura {
+    --foco: var(--color-laranja);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-palha);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--foco);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}

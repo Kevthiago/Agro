@@ -1,0 +1,161 @@
+---
+import { Image } from "astro:assets";
+import logo from "@/assets/agrosantos.png";
+import { buildWhatsAppLink, whatsappDisplayNumber } from "@/lib/whatsapp";
+
+const links = [
+  { label: "Início", href: "/" },
+  { label: "Produtos", href: "/produtos" },
+  { label: "Quem Somos", href: "/#quem-somos" },
+  { label: "Onde Estamos", href: "/#onde-estamos" },
+  { label: "Contato", href: "/#contato" },
+];
+
+// Só páginas de verdade ganham aria-current; âncoras da inicial não.
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCurrent = (href: string) =>
+  !href.includes("#") && (href === "/" ? path === "/" : path.startsWith(href));
+---
+
+<header class="superficie-escura relative z-10 bg-petroleo-escuro text-white" data-header>
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 md:px-7">
+    <a href="/" class="shrink-0 rounded-[2px] bg-white px-2 py-1">
+      <Image src={logo} alt="Agro Santos Agroveterinária, página inicial" width={144} height={33} densities={[1, 2]} loading="eager" />
+    </a>
+
+    <button
+      type="button"
+      class="menu ml-auto inline-flex items-center gap-2 px-2 py-2 font-semibold md:hidden"
+      aria-expanded="false"
+      aria-controls="menu-principal"
+      hidden
+      data-menu-toggle
+    >
+      <span class="menu-icone" aria-hidden="true"></span>
+      Menu
+    </button>
+
+    <nav
+      id="menu-principal"
+      aria-label="Principal"
+      class="nav order-last w-full md:order-none md:ml-auto md:w-auto"
+    >
+      <ul class="flex flex-wrap gap-x-5 gap-y-1 md:gap-x-6">
+        {
+          links.map(({ label, href }) => (
+            <li>
+              <a href={href} aria-current={isCurrent(href) ? "page" : undefined}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a
+      href={buildWhatsAppLink()}
+      target="_blank"
+      rel="noopener"
+      class="zap hidden font-display text-2xl leading-none font-black text-laranja sm:block"
+    >
+      <span class="sr-only">WhatsApp </span>{whatsappDisplayNumber}
+    </a>
+  </div>
+</header>
+
+<script>
+  // Recolhe o menu no celular. Sem JavaScript, os links ficam sempre à mostra.
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const toggle = header?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  if (header && toggle) {
+    header.dataset.collapsible = "";
+    toggle.hidden = false;
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      header.toggleAttribute("data-open", open);
+    };
+    toggle.addEventListener("click", () => setOpen(!header.hasAttribute("data-open")));
+    header.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && header.hasAttribute("data-open")) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .nav a {
+    display: inline-block;
+    padding-block: 0.375rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: underline 2px transparent;
+    text-underline-offset: 6px;
+    transition: text-decoration-color 0.2s;
+  }
+
+  .nav a:hover,
+  .nav a[aria-current="page"] {
+    text-decoration-color: var(--color-laranja);
+  }
+
+  .zap:hover {
+    text-decoration: underline 2px;
+    text-underline-offset: 4px;
+  }
+
+  /* ícone de três traços, desenhado em CSS */
+  .menu-icone,
+  .menu-icone::before,
+  .menu-icone::after {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .menu-icone {
+    position: relative;
+  }
+
+  .menu-icone::before,
+  .menu-icone::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+
+  .menu-icone::before {
+    top: -6px;
+  }
+
+  .menu-icone::after {
+    top: 6px;
+  }
+
+  @media (max-width: 47.99rem) {
+    /* no celular, o menu aberto vira um letreiro: links grandes, um por linha */
+    [data-collapsible] .nav {
+      display: none;
+    }
+
+    [data-collapsible][data-open] .nav {
+      display: block;
+      border-top: 1px solid rgb(255 255 255 / 0.15);
+      padding-top: 0.5rem;
+    }
+
+    [data-collapsible] .nav ul {
+      flex-direction: column;
+    }
+
+    [data-collapsible] .nav a {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 2rem;
+      line-height: 1.1;
+    }
+  }
+</style>

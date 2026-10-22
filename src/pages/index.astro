@@ -1,15 +1,20 @@
 ---
-import "../styles/global.css";
+import Base from "@/layouts/Base.astro";
+import WhatsAppTag from "@/components/WhatsAppTag.astro";
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Agro Santos</title>
-  </head>
-  <body>
-    <h1 class="text-2xl font-bold">Agro Santos</h1>
-  </body>
-</html>
+<!-- Provisório: o conteúdo real da inicial chega na próxima etapa. -->
+<Base
+  title="Agropecuária Santos, agroveterinária em Desterro de Entre Rios"
+  description="Ração, farmácia veterinária, ferramentas e artigos pra pet. Loja da família em Desterro de Entre Rios, MG. Peça pelo WhatsApp."
+>
+  <section class="relative mx-auto min-h-[26rem] max-w-6xl px-4 pt-64 pb-12 md:px-7 md:pt-14">
+    <h1 class="max-w-[9em] text-5xl text-petroleo-escuro md:text-7xl">
+      Tudo pro bicho e pra roça.
+    </h1>
+    <p class="mt-5 max-w-[30em] text-lg">
+      Ração, farmácia veterinária, ferramentas e artigos pra pet em Desterro de Entre Rios.
+    </p>
+    <WhatsAppTag />
+  </section>
+</Base>

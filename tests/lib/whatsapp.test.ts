@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { buildWhatsAppLink, whatsappDisplayNumber } from "@/lib/whatsapp";
 
 describe("buildWhatsAppLink", () => {
   it("links to the store number with a generic message", () => {
@@ -18,5 +18,11 @@ describe("buildWhatsAppLink", () => {
     const name = `Ração "Big" & Cia #1 🐶`;
     const text = new URL(buildWhatsAppLink(name)).searchParams.get("text");
     expect(text).toBe(`Olá! Tenho interesse no produto: ${name}`);
+  });
+});
+
+describe("whatsappDisplayNumber", () => {
+  it("formats the store number the way it is written on the counter", () => {
+    expect(whatsappDisplayNumber).toBe("(31) 9 8677-0027");
   });
 });
