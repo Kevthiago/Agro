@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const SLUGS = [
   "alimentacao-animal",
@@ -44,8 +44,14 @@ test("seletor de categorias marca a página atual", async ({ page }) => {
   await expect(nav.locator('[aria-current="page"]')).toHaveText("Todos");
 });
 
-test("busca ignora acento, esconde o que não casa e volta ao limpar", async ({ page }) => {
+// A ilha só responde depois de hidratada (o atributo ssr some do astro-island).
+async function openCatalog(page: Page) {
   await page.goto("/produtos");
+  await page.locator("astro-island:not([ssr])").waitFor({ state: "attached" });
+}
+
+test("busca ignora acento, esconde o que não casa e volta ao limpar", async ({ page }) => {
+  await openCatalog(page);
   const items = page.getByRole("main").locator("article");
   await expect(items).toHaveCount(14);
   const input = page.getByLabel("Buscar produto");
@@ -59,7 +65,7 @@ test("busca ignora acento, esconde o que não casa e volta ao limpar", async ({ 
 });
 
 test("busca sem resultado oferece o WhatsApp", async ({ page }) => {
-  await page.goto("/produtos");
+  await openCatalog(page);
   await page.getByLabel("Buscar produto").fill("xyzzyqq");
   await expect(page.getByRole("status")).toHaveText("Nenhum produto encontrado");
   const link = page.getByRole("main").getByRole("link", { name: "Perguntar no WhatsApp" });

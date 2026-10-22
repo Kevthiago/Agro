@@ -15,6 +15,8 @@
   --color-tinta: #12262c;
   --color-palha: #edefe6;
   --color-madeira: #5a4630;
+  /* branco puro: campo de busca e texto sobre petróleo (contraste 5:1) */
+  --color-branco: #fff;
 
   --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
   --font-sans: "Figtree", system-ui, sans-serif;
