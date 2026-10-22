@@ -1,0 +1,135 @@
+---
+import { Image } from "astro:assets";
+import { CATEGORIES } from "@/config/categories";
+---
+
+<!-- Seis corredores da loja: a tira sob o mouse (ou com foco) se abre. -->
+<section class="corredores superficie-escura" aria-labelledby="corredores-titulo">
+  <h2 id="corredores-titulo" class="sr-only">
+    Corredores da loja
+  </h2>
+  <ul>
+    {CATEGORIES.map(({ slug, label, photo }) => (
+      <li>
+        <a href={`/produtos/${slug}`}>
+          {/* foto decorativa: o nome do corredor está no h3 */}
+          <Image
+            src={photo}
+            alt=""
+            widths={[320, 640, 900]}
+            sizes="(min-width: 64rem) 32vw, 13rem"
+            loading="lazy"
+          />
+          <h3>{label}</h3>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .corredores {
+    background: var(--color-petroleo-escuro);
+  }
+
+  ul {
+    display: flex;
+    gap: 3px;
+    padding: 0;
+    list-style: none;
+    /* celular: rolagem lateral, uma tira encaixa por vez */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  li {
+    flex: 0 0 min(13rem, 62vw);
+    scroll-snap-align: start;
+  }
+
+  a {
+    position: relative;
+    display: block;
+    height: 13rem;
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* anel de foco por dentro: por fora seria cortado pela rolagem */
+  a:focus-visible {
+    outline-offset: -5px;
+  }
+
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* escurece a base da foto para o letreiro ser legível */
+  a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      0deg,
+      rgb(18 38 44 / 0.93),
+      rgb(18 38 44 / 0.27) 60%,
+      rgb(60 119 133 / 0.33)
+    );
+  }
+
+  h3 {
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 1;
+    max-width: 6em;
+    font-size: 1.75rem;
+    transition: color 0.3s;
+  }
+
+  a:hover h3,
+  a:focus-visible h3 {
+    color: var(--color-laranja);
+  }
+
+  @media (min-width: 64rem) {
+    ul {
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+
+    li {
+      flex: 1 1 0;
+      min-width: 0;
+      transition: flex-grow 0.45s ease;
+    }
+
+    li:hover,
+    li:focus-within {
+      flex-grow: 2.2;
+    }
+
+    a {
+      height: 14rem;
+    }
+
+    /* cabe "Alimentação" mesmo na tira estreitada pela vizinha aberta */
+    h3 {
+      font-size: clamp(1.375rem, 2.1vw, 1.75rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    li,
+    h3 {
+      transition: none;
+    }
+  }
+</style>

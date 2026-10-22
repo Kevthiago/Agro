@@ -1,0 +1,105 @@
+---
+import { Image } from "astro:assets";
+// Foto provisória (banco de imagens gerado por IA). Trocar por uma foto real da loja ou da região.
+import plantacao from "@/assets/plantacao.jpg";
+import WhatsAppTag from "@/components/WhatsAppTag.astro";
+---
+
+<section class="hero superficie-escura" data-hero>
+  <!-- maior elemento da primeira tela (LCP): carrega já, com prioridade -->
+  <Image
+    src={plantacao}
+    alt=""
+    widths={[640, 960, 1280, 1920]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="foto"
+  />
+  <div class="conteudo">
+    <h1>Tudo pro bicho e pra roça, no balcão de Desterro.</h1>
+    <p>
+      Ração, farmácia veterinária, ferramentas e artigos pra pet. Loja da família há mais de 15 anos
+      em Desterro de Entre Rios.
+    </p>
+    <WhatsAppTag />
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: #fff;
+    background: var(--color-tinta);
+  }
+
+  .foto {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 62%;
+  }
+
+  /* véu escuro: no celular cobre tudo; no desktop, só o lado do texto */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(18 38 44 / 0.55), rgb(18 38 44 / 0.88) 55%);
+  }
+
+  .conteudo {
+    position: relative;
+    max-width: 72rem;
+    margin-inline: auto;
+    /* no celular o texto começa abaixo da etiqueta pendurada */
+    padding: 15.5rem 1rem 3rem;
+    --tag-cord: rgb(232 238 233 / 0.7);
+    --tag-right: 1.25rem;
+  }
+
+  h1 {
+    max-width: 9em;
+    font-size: clamp(3.25rem, 8.2vw, 6.5rem);
+    color: #fff;
+  }
+
+  p {
+    max-width: 30em;
+    margin-top: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: #e8eee9;
+  }
+
+  @media (min-width: 48rem) {
+    .hero::before {
+      background: linear-gradient(
+        90deg,
+        rgb(18 38 44 / 0.95) 0%,
+        rgb(18 38 44 / 0.79) 38%,
+        rgb(18 38 44 / 0.2) 75%,
+        rgb(18 38 44 / 0) 100%
+      );
+    }
+
+    .conteudo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: clamp(28rem, 62vh, 36rem);
+      padding: 3.5rem 1.75rem 3.5rem;
+      --tag-right: 4%;
+    }
+
+    p {
+      font-size: 1.125rem;
+    }
+  }
+</style>

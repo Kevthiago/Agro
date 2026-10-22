@@ -1,0 +1,61 @@
+---
+interface Props {
+  href: string;
+  /** Texto visível da etiqueta. */
+  label: string;
+  /** Complemento só para leitores de tela (ex.: o nome do produto). */
+  srLabel?: string;
+}
+
+const { href, label, srLabel } = Astro.props;
+---
+
+<!--
+  Botão em formato de etiqueta de preço (bico com furo à esquerda).
+  O recorte fica no <span>: no <a> ele cortaria o anel de foco.
+-->
+<a class="ticket" href={href} target="_blank" rel="noopener">
+  <span class="corpo">
+    {label}
+    {srLabel && <span class="sr-only">{srLabel}</span>}
+  </span>
+</a>
+
+<style>
+  .ticket {
+    display: inline-block;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  @media (min-width: 48rem) {
+    .ticket {
+      font-size: 0.875rem;
+    }
+  }
+
+  .corpo {
+    display: block;
+    padding: 0.5rem 0.75rem 0.5rem 1.375rem;
+    /* branco sobre petróleo: contraste 5:1 */
+    background: var(--color-petroleo);
+    clip-path: polygon(11px 0, 100% 0, 100% 100%, 11px 100%, 0 50%);
+    mask: radial-gradient(circle 3px at 11px 50%, transparent 2.5px, #000 3.5px);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  .ticket:hover .corpo,
+  .ticket:focus-visible .corpo {
+    background: var(--color-laranja);
+    color: var(--color-tinta);
+  }
+
+  .ticket:focus-visible {
+    outline-color: var(--color-petroleo-escuro);
+  }
+</style>

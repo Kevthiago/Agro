@@ -1,0 +1,74 @@
+---
+import ProductItem from "@/components/ProductItem.astro";
+import TicketLink from "@/components/TicketLink.astro";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+import type { Product } from "@/lib/types";
+
+interface Props {
+  products: Product[];
+  emptyMessage?: string;
+}
+
+const { products, emptyMessage = "Ainda não temos itens aqui." } = Astro.props;
+---
+
+{products.length > 0 ? (
+  <ul class="prateleira">
+    {products.map((product) => (
+      <li>
+        <ProductItem product={product} />
+      </li>
+    ))}
+  </ul>
+) : (
+  <div class="vazia">
+    <p>{emptyMessage}</p>
+    <TicketLink href={buildWhatsAppLink()} label="Perguntar no WhatsApp" />
+  </div>
+)}
+
+<style>
+  /*
+    Produtos em pé sobre tábuas. Cada item carrega o seu pedaço de tábua;
+    sem espaço entre colunas, os pedaços de uma fileira viram uma tábua só.
+  */
+  .prateleira {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(10.5rem, 50%), 1fr));
+    row-gap: 3.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    position: relative;
+    padding: 0 0.5rem 1.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    li {
+      padding-inline: 0.75rem;
+    }
+  }
+
+  li::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -1.25rem;
+    height: 1.25rem;
+    /* tábua de frente: quina clara, face de madeira, beirada de baixo na sombra */
+    background: linear-gradient(#7a6245 0 2px, var(--color-madeira) 2px 14px, #3d2f1e 14px);
+    /* sombra só para baixo (spread negativo); as emendas entre itens não aparecem */
+    box-shadow: 0 16px 14px -12px rgb(18 38 44 / 0.5);
+  }
+
+  .vazia {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    padding: 1.5rem 0 1.75rem;
+    border-bottom: 0.875rem solid var(--color-madeira);
+    font-size: 1.0625rem;
+  }
+</style>

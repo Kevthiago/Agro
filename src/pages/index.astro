@@ -1,20 +1,81 @@
 ---
 import Base from "@/layouts/Base.astro";
-import WhatsAppTag from "@/components/WhatsAppTag.astro";
+import Hero from "@/components/Hero.astro";
+import Corredores from "@/components/Corredores.astro";
+import Prateleira from "@/components/Prateleira.astro";
+import { getPublishedProducts } from "@/lib/products";
+
+// Seleção da prateleira: os primeiros pela ordem definida no painel.
+const products = (await getPublishedProducts()).slice(0, 5);
 ---
 
-<!-- Provisório: o conteúdo real da inicial chega na próxima etapa. -->
 <Base
   title="Agropecuária Santos, agroveterinária em Desterro de Entre Rios"
   description="Ração, farmácia veterinária, ferramentas e artigos pra pet. Loja da família em Desterro de Entre Rios, MG. Peça pelo WhatsApp."
 >
-  <section class="relative mx-auto min-h-[26rem] max-w-6xl px-4 pt-64 pb-12 md:px-7 md:pt-14">
-    <h1 class="max-w-[9em] text-5xl text-petroleo-escuro md:text-7xl">
-      Tudo pro bicho e pra roça.
-    </h1>
-    <p class="mt-5 max-w-[30em] text-lg">
-      Ração, farmácia veterinária, ferramentas e artigos pra pet em Desterro de Entre Rios.
-    </p>
-    <WhatsAppTag />
+  <Hero />
+  <Corredores />
+
+  <section class="loja" aria-labelledby="prateleira-titulo">
+    <div class="cabeca">
+      <h2 id="prateleira-titulo">Na prateleira</h2>
+      <p>
+        Viu o que precisa? Toque na etiqueta e a conversa já abre no WhatsApp com o nome do produto.
+      </p>
+    </div>
+    <Prateleira products={products} />
+    <a href="/produtos" class="todos">
+      Ver todos os produtos
+    </a>
   </section>
 </Base>
+
+<style>
+  .loja {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 3.5rem 1rem 4.5rem;
+  }
+
+  .cabeca {
+    margin-bottom: 2.25rem;
+  }
+
+  h2 {
+    font-size: clamp(2.75rem, 6vw, 3.5rem);
+    color: var(--color-petroleo-escuro);
+  }
+
+  .cabeca p {
+    max-width: 34em;
+    margin-top: 0.625rem;
+    font-size: 1rem;
+  }
+
+  .todos {
+    display: inline-block;
+    margin-top: 3rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--color-petroleo-escuro);
+    text-decoration: underline 3px var(--color-laranja);
+    text-underline-offset: 6px;
+  }
+
+  .todos::after {
+    /* seta só visual (texto alternativo vazio) */
+    content: " →" / "";
+  }
+
+  .todos:hover {
+    color: var(--color-petroleo);
+  }
+
+  @media (min-width: 48rem) {
+    .loja {
+      padding-inline: 1.75rem;
+    }
+  }
+</style>
