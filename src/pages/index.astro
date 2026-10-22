@@ -3,6 +3,10 @@ import Base from "@/layouts/Base.astro";
 import Hero from "@/components/Hero.astro";
 import Corredores from "@/components/Corredores.astro";
 import Prateleira from "@/components/Prateleira.astro";
+import QuemSomos from "@/components/QuemSomos.astro";
+import OndeEstamos from "@/components/OndeEstamos.astro";
+import Contato from "@/components/Contato.astro";
+import LocalBusinessJsonLd from "@/components/LocalBusinessJsonLd.astro";
 import { getPublishedProducts } from "@/lib/products";
 
 // Seleção da prateleira: os primeiros pela ordem definida no painel.
@@ -13,6 +17,7 @@ const products = (await getPublishedProducts()).slice(0, 5);
   title="Agropecuária Santos, agroveterinária em Desterro de Entre Rios"
   description="Ração, farmácia veterinária, ferramentas e artigos pra pet. Loja da família em Desterro de Entre Rios, MG. Peça pelo WhatsApp."
 >
+  <LocalBusinessJsonLd slot="head" />
   <Hero />
   <Corredores />
 
@@ -28,6 +33,10 @@ const products = (await getPublishedProducts()).slice(0, 5);
       Ver todos os produtos
     </a>
   </section>
+
+  <QuemSomos />
+  <OndeEstamos />
+  <Contato />
 </Base>
 
 <style>

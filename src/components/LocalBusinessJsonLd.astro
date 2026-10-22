@@ -1,0 +1,10 @@
+---
+import logo from "@/assets/agrosantos.png";
+import { site } from "@/config/site";
+import { buildLocalBusinessJsonLd, serializeJsonLd } from "@/lib/seo";
+
+// Astro.site vem de PUBLIC_SITE_URL (astro.config.mjs).
+const data = buildLocalBusinessJsonLd(site, Astro.site ?? Astro.url, logo.src);
+---
+
+<script type="application/ld+json" is:inline set:html={serializeJsonLd(data)} />

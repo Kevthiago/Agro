@@ -2,10 +2,9 @@
 import { Image } from "astro:assets";
 import logo from "@/assets/ASlogo.png";
 import { site } from "@/config/site";
+import { telHref } from "@/lib/contact";
 import { buildWhatsAppLink, whatsappDisplayNumber } from "@/lib/whatsapp";
 
-// "(31) 3736-1025" -> "tel:+553137361025"
-const telHref = (phone: string) => `tel:+55${phone.replace(/\D/g, "")}`;
 const year = new Date().getFullYear();
 ---
 

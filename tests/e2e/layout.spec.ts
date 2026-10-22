@@ -37,7 +37,11 @@ test("rodapé traz endereço, telefones, e-mail, Instagram e CNPJ", async ({ pag
 
 test("fontes vêm do próprio site, sem hosts de terceiros", async ({ page, baseURL }) => {
   const requests: Request[] = [];
-  page.on("request", (request) => requests.push(request));
+  // Só as requisições da própria página: o mapa do Google (iframe em "Onde estamos") é
+  // um conteúdo de terceiros que traz as fontes dele.
+  page.on("request", (request) => {
+    if (request.frame() === page.mainFrame()) requests.push(request);
+  });
 
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);

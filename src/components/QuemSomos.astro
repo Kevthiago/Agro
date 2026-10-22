@@ -1,0 +1,118 @@
+---
+// Fatos do site antigo (Quem Somos + História). Não acrescentar datas, prêmios nem depoimentos.
+const range = [
+  "Rações",
+  "Farmácia veterinária",
+  "Artigos e brinquedos pra pet",
+  "Ferramentas",
+  "Óleo pra moto",
+  "EPI",
+  "Botinas",
+  "Chapéus",
+  "Cintos de couro",
+];
+---
+
+<section id="quem-somos" class="quem" aria-labelledby="quem-titulo">
+  <div class="grade">
+    <div class="texto">
+      <h2 id="quem-titulo">Quem somos</h2>
+      <p class="abre">
+        Somos uma empresa familiar de varejo agropecuário, pet e farmácia animal, com mais de 15
+        anos de balcão em Desterro de Entre Rios.
+      </p>
+      <p>
+        A freguesia é fiel: aprovou os produtos e o atendimento, e volta para comprar de novo. Ração
+        e farmácia para animais de pequeno e médio porte, e o que mais a lida pedir.
+      </p>
+    </div>
+
+    <div class="tem">
+      <p id="tem-titulo" class="tem-titulo">
+        No balcão tem
+      </p>
+      <!-- letreiro de parede: a lista corre em linha, separada por pontos -->
+      <ul aria-labelledby="tem-titulo">
+        {range.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+      <p class="mais">E outras coisas mais. Se não achar, pergunte.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .quem {
+    border-top: 1px solid color-mix(in srgb, var(--color-tinta) 15%, transparent);
+  }
+
+  .grade {
+    display: grid;
+    gap: 2.5rem;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1rem 4.5rem;
+  }
+
+  h2 {
+    font-size: clamp(2.75rem, 6vw, 3.5rem);
+    color: var(--color-petroleo-escuro);
+  }
+
+  .texto p {
+    max-width: 32em;
+    margin-top: 1rem;
+    font-size: 1.0625rem;
+  }
+
+  .texto .abre {
+    margin-top: 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .tem-titulo {
+    font-weight: 700;
+    color: var(--color-petroleo);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0;
+    margin-top: 0.5rem;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(1.75rem, 4.2vw, 2.5rem);
+    line-height: 1.05;
+    color: var(--color-tinta);
+  }
+
+  li:not(:last-child)::after {
+    /* ponto laranja entre os itens, só visual */
+    content: "·" / "";
+    margin-inline: 0.3em;
+    color: var(--color-laranja);
+  }
+
+  .mais {
+    margin-top: 0.75rem;
+    color: var(--color-petroleo-escuro);
+  }
+
+  @media (min-width: 48rem) {
+    .grade {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: 4rem;
+      padding: 5rem 1.75rem 5.5rem;
+    }
+
+    .tem {
+      padding-top: 0.5rem;
+    }
+  }
+</style>

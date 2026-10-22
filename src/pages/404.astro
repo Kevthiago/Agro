@@ -1,0 +1,90 @@
+---
+import Base from "@/layouts/Base.astro";
+import TicketLink from "@/components/TicketLink.astro";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+---
+
+<Base
+  title="Página não encontrada"
+  description="Esta página não existe ou mudou de lugar. Volte ao início, veja os produtos ou chame a Agropecuária Santos no WhatsApp."
+  noindex
+>
+  <section class="perdida">
+    <h1>Página não encontrada</h1>
+    <p>
+      Procuramos na prateleira e não achamos este endereço. Ele pode ter mudado ou ter sido digitado
+      errado.
+    </p>
+
+    <!-- prateleira vazia: a tábua sem nada em cima -->
+    <div class="tabua">
+      <ul>
+        <li>
+          <a href="/">Início</a>
+        </li>
+        <li>
+          <a href="/produtos">Produtos</a>
+        </li>
+      </ul>
+      <TicketLink href={buildWhatsAppLink()} label="Perguntar no WhatsApp" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .perdida {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1rem 5rem;
+  }
+
+  h1 {
+    max-width: 8em;
+    font-size: clamp(3.25rem, 8vw, 5.5rem);
+    color: var(--color-petroleo-escuro);
+  }
+
+  p {
+    max-width: 30em;
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+  }
+
+  .tabua {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2.5rem;
+    margin-top: 3.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 0.875rem solid var(--color-madeira);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  a:not([target]) {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-petroleo-escuro);
+    text-decoration: underline 3px var(--color-laranja);
+    text-underline-offset: 6px;
+  }
+
+  a:not([target]):hover {
+    color: var(--color-petroleo);
+  }
+
+  @media (min-width: 48rem) {
+    .perdida {
+      padding: 5.5rem 1.75rem 7rem;
+    }
+  }
+</style>

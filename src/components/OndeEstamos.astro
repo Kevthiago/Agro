@@ -1,0 +1,125 @@
+---
+import { site } from "@/config/site";
+import { directionsUrl } from "@/lib/contact";
+---
+
+<section id="onde-estamos" class="onde superficie-escura" aria-labelledby="onde-titulo">
+  <div class="grade">
+    <div class="texto">
+      <h2 id="onde-titulo">Onde estamos</h2>
+      <p>Em Desterro de Entre Rios, no interior de Minas Gerais.</p>
+      <address>
+        <span class="rua">{site.address.street}</span>
+        <span class="cidade">
+          {site.address.city}, {site.address.state}
+        </span>
+      </address>
+      <a class="rota" href={directionsUrl(site)} target="_blank" rel="noopener">
+        Como chegar
+      </a>
+    </div>
+
+    <!-- mapa de terceiros: só carrega quando chega perto da tela -->
+    <div class="mapa">
+      <iframe
+        src={site.mapsEmbedUrl}
+        title={`Mapa com a localização da ${site.name}`}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<style>
+  .onde {
+    background: var(--color-petroleo-escuro);
+    color: var(--color-palha);
+  }
+
+  .grade {
+    display: grid;
+    gap: 2rem;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1rem;
+  }
+
+  h2 {
+    font-size: clamp(2.75rem, 6vw, 3.5rem);
+    color: var(--color-branco);
+  }
+
+  p {
+    margin-top: 1rem;
+    font-size: 1.0625rem;
+  }
+
+  address {
+    margin-top: 1.5rem;
+    font-style: normal;
+  }
+
+  .rua {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2rem, 4.5vw, 2.75rem);
+    line-height: 0.95;
+    color: var(--color-branco);
+  }
+
+  .cidade {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 1.125rem;
+  }
+
+  .rota {
+    display: inline-block;
+    margin-top: 2rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--color-branco);
+    text-decoration: underline 3px var(--color-laranja);
+    text-underline-offset: 6px;
+  }
+
+  .rota::after {
+    /* seta só visual; o link abre em outra aba */
+    content: " ↗" / "";
+  }
+
+  .rota:hover {
+    color: var(--color-laranja);
+  }
+
+  /* moldura fina, como um quadro pendurado na parede da loja */
+  .mapa {
+    border: 6px solid var(--color-palha);
+    background: var(--color-palha);
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 20rem;
+    border: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .grade {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: center;
+      gap: 3.5rem;
+      padding: 5rem 1.75rem;
+    }
+
+    iframe {
+      height: 26rem;
+    }
+  }
+</style>

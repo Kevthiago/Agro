@@ -18,8 +18,10 @@ interface Props {
 const { title, description, image = logo.src, noindex = false } = Astro.props;
 
 const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
-// Endereços absolutos só existem quando o domínio estiver em astro.config (site).
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+// Endereços absolutos a partir de `site` (PUBLIC_SITE_URL, em astro.config).
+// Páginas fora dos buscadores (404, admin) não têm endereço canônico.
+const canonical =
+  Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
 ---
 
@@ -45,6 +47,7 @@ const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
+    <slot name="head" />
   </head>
   <body class="flex min-h-dvh flex-col">
     <a href="#conteudo" class="pular">Pular para o conteúdo</a>
