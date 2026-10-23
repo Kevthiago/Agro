@@ -1,6 +1,8 @@
 import { vi } from "vitest";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import type { AdminClient } from "@/admin/auth";
+import type { PanelClient } from "@/admin/App";
+import { fakeProductsClient } from "./fake-products";
 
 type Listener = (event: AuthChangeEvent, session: Session | null) => void;
 type RpcResult = { data: unknown; error: unknown };
@@ -23,6 +25,8 @@ export function fakeClient(options: FakeOptions = {}) {
   const listeners = new Set<Listener>();
   const unsubscribe = vi.fn();
   const rpcResult = options.rpc ?? { data: false, error: null };
+  // catálogo vazio: o painel de produtos abre sem nada cadastrado
+  const products = fakeProductsClient();
 
   const client = {
     auth: {
@@ -54,7 +58,9 @@ export function fakeClient(options: FakeOptions = {}) {
     rpc: vi.fn<AdminClient["rpc"]>(() =>
       rpcResult instanceof Error ? Promise.reject(rpcResult) : Promise.resolve(rpcResult),
     ),
-  } satisfies AdminClient;
+    from: products.client.from,
+    storage: products.client.storage,
+  } satisfies PanelClient;
 
   /** Simula um evento de autenticação (ex.: SIGNED_OUT). */
   const emit = (event: AuthChangeEvent, session: Session | null) =>

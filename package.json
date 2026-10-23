@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
+    "test:integration": "vitest run tests/integration",
     "lint": "eslint .",
     "format": "prettier --write .",
     "db:start": "supabase start",

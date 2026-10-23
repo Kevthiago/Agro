@@ -32,6 +32,17 @@ test("/admin não está no sitemap, que lista as outras páginas", async ({ requ
   expect(paths.filter((p) => p.startsWith("/admin"))).toEqual([]);
 });
 
+// O painel de produtos precisa do Supabase; aqui só garantimos que o pacote do painel
+// (formulário, lista, preparo de fotos) carrega no navegador sem erros.
+test("/admin carrega o painel sem erros no console", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => message.type() === "error" && errors.push(message.text()));
+  await page.goto("/admin");
+  await expect(page.getByText(NOT_CONFIGURED)).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("robots.txt bloqueia o /admin", async ({ request }) => {
   expect(await (await request.get("/robots.txt")).text()).toMatch(/^Disallow: \/admin$/m);
 });

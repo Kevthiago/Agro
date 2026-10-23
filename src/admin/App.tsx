@@ -4,13 +4,17 @@ import logo from "@/assets/agrosantos.png";
 import { checkIsEditor, signOut, type AdminClient } from "@/admin/auth";
 import LoginScreen from "@/admin/LoginScreen";
 import ProductsPanel from "@/admin/ProductsPanel";
+import type { ProductsClient } from "@/admin/products-api";
 import { getBrowserClient } from "@/admin/supabase-browser";
 
 type View = "loading" | "signedOut" | "denied" | "editor";
 
+/** O que o painel inteiro usa do cliente Supabase: entrar e editar produtos. */
+export type PanelClient = AdminClient & ProductsClient;
+
 interface Props {
   /** Injetável nos testes; `null` = variáveis do Supabase ausentes. */
-  client?: AdminClient | null;
+  client?: PanelClient | null;
 }
 
 /** Painel da loja: decide entre entrar, sem permissão e a edição do catálogo. */
@@ -115,7 +119,7 @@ export default function App({ client = getBrowserClient() }: Props) {
             </button>
           </section>
         ) : (
-          <ProductsPanel />
+          <ProductsPanel client={client} />
         )}
       </div>
     </div>

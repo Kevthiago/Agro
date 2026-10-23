@@ -1,9 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { CATEGORIES, isCategorySlug, type CategorySlug } from "@/config/categories";
+import { productImageUrl } from "@/lib/product-images";
 import { createPublicClient } from "@/lib/supabase";
 import type { Product, ProductRow } from "@/lib/types";
-
-const BUCKET = "product-images";
 
 /** Subconjunto do import.meta.env que esta camada lê (injetável nos testes). */
 export interface ProductsEnv {
@@ -94,6 +93,6 @@ export async function getPublishedProducts(options: GetProductsOptions = {}): Pr
   }
 
   const base = url ?? "";
-  const publicUrl = (path: string) => `${base}/storage/v1/object/public/${BUCKET}/${path}`;
+  const publicUrl = (path: string) => productImageUrl(base, path);
   return sortProducts((data as ProductRow[]).map((r) => mapRow(r, publicUrl)));
 }
