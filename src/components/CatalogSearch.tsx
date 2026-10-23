@@ -44,6 +44,7 @@ export default function CatalogSearch({ items, whatsappHref }: Props) {
       {matches.length === 0 && (
         <a class="busca-whats" href={whatsappHref} target="_blank" rel="noopener">
           Perguntar no WhatsApp
+          <span class="sr-only"> (abre em nova aba)</span>
         </a>
       )}
     </div>

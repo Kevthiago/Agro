@@ -1,4 +1,5 @@
 ---
+import NewTabHint from "@/components/NewTabHint.astro";
 import { site } from "@/config/site";
 import { directionsUrl } from "@/lib/contact";
 ---
@@ -16,6 +17,7 @@ import { directionsUrl } from "@/lib/contact";
       </address>
       <a class="rota" href={directionsUrl(site)} target="_blank" rel="noopener">
         Como chegar
+        <NewTabHint />
       </a>
     </div>
 

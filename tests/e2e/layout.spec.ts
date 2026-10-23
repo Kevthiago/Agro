@@ -47,6 +47,10 @@ test("fontes vêm do próprio site, sem hosts de terceiros", async ({ page, base
   await page.evaluate(() => document.fonts.ready);
   await page.waitForLoadState("networkidle");
 
+  // O mapa é o único quadro além do principal.
+  expect(page.frames().filter((f) => f !== page.mainFrame()).length).toBeLessThanOrEqual(1);
+  await expect(page.locator("iframe")).toHaveCount(1);
+
   const origin = new URL(baseURL!).host;
   const hosts = new Set(requests.map((r) => new URL(r.url()).host));
   for (const host of hosts) {

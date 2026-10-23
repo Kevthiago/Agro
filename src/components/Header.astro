@@ -1,4 +1,5 @@
 ---
+import NewTabHint from "@/components/NewTabHint.astro";
 import { Image } from "astro:assets";
 import logo from "@/assets/agrosantos.png";
 import { buildWhatsAppLink, whatsappDisplayNumber } from "@/lib/whatsapp";
@@ -20,7 +21,14 @@ const isCurrent = (href: string) =>
 <header class="superficie-escura relative z-10 bg-petroleo-escuro text-white" data-header>
   <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 md:px-7">
     <a href="/" class="shrink-0 rounded-[2px] bg-white px-2 py-1">
-      <Image src={logo} alt="Agro Santos Agroveterinária, página inicial" width={144} height={33} densities={[1, 2]} loading="eager" />
+      <Image
+        src={logo}
+        alt="Agro Santos Agroveterinária, página inicial"
+        width={144}
+        height={33}
+        densities={[1, 2]}
+        loading="eager"
+      />
     </a>
 
     <button
@@ -41,15 +49,13 @@ const isCurrent = (href: string) =>
       class="nav order-last w-full md:order-none md:ml-auto md:w-auto"
     >
       <ul class="flex flex-wrap gap-x-5 gap-y-1 md:gap-x-6">
-        {
-          links.map(({ label, href }) => (
-            <li>
-              <a href={href} aria-current={isCurrent(href) ? "page" : undefined}>
-                {label}
-              </a>
-            </li>
-          ))
-        }
+        {links.map(({ label, href }) => (
+          <li>
+            <a href={href} aria-current={isCurrent(href) ? "page" : undefined}>
+              {label}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
 
@@ -59,7 +65,9 @@ const isCurrent = (href: string) =>
       rel="noopener"
       class="zap hidden font-display text-2xl leading-none font-black text-laranja sm:block"
     >
-      <span class="sr-only">WhatsApp </span>{whatsappDisplayNumber}
+      <span class="sr-only">WhatsApp </span>
+      {whatsappDisplayNumber}
+      <NewTabHint />
     </a>
   </div>
 </header>
@@ -76,6 +84,10 @@ const isCurrent = (href: string) =>
       header.toggleAttribute("data-open", open);
     };
     toggle.addEventListener("click", () => setOpen(!header.hasAttribute("data-open")));
+    // Escolher um link recolhe o menu (âncoras da própria página não recarregam a página).
+    header.querySelector("nav")?.addEventListener("click", (event) => {
+      if ((event.target as Element).closest("a")) setOpen(false);
+    });
     header.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && header.hasAttribute("data-open")) {
         setOpen(false);

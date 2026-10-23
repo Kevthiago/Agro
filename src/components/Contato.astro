@@ -1,4 +1,5 @@
 ---
+import NewTabHint from "@/components/NewTabHint.astro";
 import WhatsAppTag from "@/components/WhatsAppTag.astro";
 import { site } from "@/config/site";
 import { telHref } from "@/lib/contact";
@@ -36,7 +37,7 @@ import { telHref } from "@/lib/contact";
           <dd>
             <a href={site.instagram.url} target="_blank" rel="noopener">
               {site.instagram.handle}
-              <span class="sr-only"> (abre em nova aba)</span>
+              <NewTabHint />
             </a>
           </dd>
         </div>
@@ -90,7 +91,7 @@ import { telHref } from "@/lib/contact";
 
   dt {
     font-weight: 700;
-    color: var(--color-petroleo);
+    color: var(--color-petroleo-escuro);
   }
 
   dd {

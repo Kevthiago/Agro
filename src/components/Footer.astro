@@ -1,4 +1,5 @@
 ---
+import NewTabHint from "@/components/NewTabHint.astro";
 import { Image } from "astro:assets";
 import logo from "@/assets/ASlogo.png";
 import { site } from "@/config/site";
@@ -11,14 +12,14 @@ const year = new Date().getFullYear();
 <footer class="superficie-escura bg-tinta text-palha">
   <!-- faixa do endereço, como o letreiro da fachada -->
   <div class="bg-petroleo-escuro">
-    <div
-      class="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-x-10 gap-y-5 px-4 py-8 md:px-7 md:py-10"
-    >
+    <div class="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-x-10 gap-y-5 px-4 py-8 md:px-7 md:py-10">
       <address class="not-italic">
         <p class="font-display text-4xl leading-[0.95] font-black text-white md:text-5xl">
           {site.address.street}
         </p>
-        <p class="mt-2 text-lg">{site.address.city}, {site.address.state}</p>
+        <p class="mt-2 text-lg">
+          {site.address.city}, {site.address.state}
+        </p>
       </address>
       <a
         href={buildWhatsAppLink()}
@@ -26,7 +27,9 @@ const year = new Date().getFullYear();
         rel="noopener"
         class="font-display text-4xl leading-none font-black text-laranja hover:underline md:text-5xl"
       >
-        <span class="sr-only">WhatsApp </span>{whatsappDisplayNumber}
+        <span class="sr-only">WhatsApp </span>
+        {whatsappDisplayNumber}
+        <NewTabHint />
       </a>
     </div>
   </div>
@@ -34,33 +37,40 @@ const year = new Date().getFullYear();
   <div class="mx-auto max-w-6xl px-4 pt-10 pb-24 md:px-7 md:pb-10">
     <div class="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_1fr]">
       <a href="/" class="w-fit">
-        <Image src={logo} alt="Agro Santos, página inicial" width={88} height={63} densities={[1, 2]} />
+        <Image
+          src={logo}
+          alt="Agro Santos, página inicial"
+          width={88}
+          height={63}
+          densities={[1, 2]}
+        />
       </a>
 
       <div>
         <h2 class="rotulo">Telefones</h2>
         <ul class="mt-2 space-y-1">
-          {
-            site.phones.map((phone) => (
-              <li>
-                <a href={telHref(phone)} class="link">
-                  {phone}
-                </a>
-              </li>
-            ))
-          }
+          {site.phones.map((phone) => (
+            <li>
+              <a href={telHref(phone)} class="link">
+                {phone}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
       <div>
         <h2 class="rotulo">E-mail</h2>
-        <a href={`mailto:${site.email}`} class="link mt-2 inline-block break-all">{site.email}</a>
+        <a href={`mailto:${site.email}`} class="link mt-2 inline-block break-all">
+          {site.email}
+        </a>
       </div>
 
       <div>
         <h2 class="rotulo">Instagram</h2>
         <a href={site.instagram.url} target="_blank" rel="noopener" class="link mt-2 inline-block">
           {site.instagram.handle}
+          <NewTabHint />
         </a>
       </div>
     </div>

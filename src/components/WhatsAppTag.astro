@@ -1,4 +1,5 @@
 ---
+import NewTabHint from "@/components/NewTabHint.astro";
 import { buildWhatsAppLink, whatsappDisplayNumber } from "@/lib/whatsapp";
 
 interface Props {
@@ -20,8 +21,11 @@ const href = buildWhatsAppLink(productName);
 <a class:list={["tag", className]} href={href} target="_blank" rel="noopener">
   <span class="corpo">
     <b>Chama no WhatsApp</b>
-    <span class="linha">{productName ? "Pergunte por este produto" : "Fale direto com a loja"}</span>
+    <span class="linha">
+      {productName ? "Pergunte por este produto" : "Fale direto com a loja"}
+    </span>
     <small>{whatsappDisplayNumber}</small>
+    <NewTabHint />
   </span>
 </a>
 
