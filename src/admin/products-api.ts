@@ -1,3 +1,4 @@
+import { AdminError, GENERIC } from "@/admin/errors";
 import { getBrowserClient } from "@/admin/supabase-browser";
 import type { AdminProduct } from "@/admin/types";
 import { isCategorySlug } from "@/config/categories";
@@ -22,8 +23,17 @@ export interface SelectQuery extends Rows {
   order(column: string): SelectQuery;
   like(column: string, pattern: string): Rows;
 }
+interface Returning {
+  select(columns: "*"): Rows;
+}
 export interface FilterQuery {
-  eq(column: "id", value: string): { select(columns: "*"): Rows };
+  eq(
+    column: "id",
+    value: string,
+  ): Returning & {
+    eq(column: "image_path", value: string): Returning;
+    is(column: "image_path", value: null): Returning;
+  };
 }
 export interface InsertQuery {
   select(columns: "*"): { single(): Rows };
@@ -53,12 +63,14 @@ export interface ProductsClient {
 
 export const PERMISSION = "Você não tem permissão para fazer isso.";
 export const OFFLINE = "Sem conexão. Tente de novo.";
-export const GENERIC = "Algo deu errado. Tente de novo.";
+export { GENERIC };
 export const NOT_FOUND = "Não encontramos esse produto. Atualize a lista e tente de novo.";
+export const CHANGED =
+  "Esse produto foi alterado em outra janela. Atualize a página e tente de novo.";
 const NOT_CONFIGURED = "Painel não configurado.";
 
 /** Dados recusados: `fields` diz a mensagem de cada campo com problema. */
-export class ValidationError extends Error {
+export class ValidationError extends AdminError {
   readonly fields: Record<string, string>;
 
   constructor(fields: Record<string, string>) {
@@ -72,7 +84,7 @@ export class ValidationError extends Error {
 export type PhotoChange = { kind: "keep" } | { kind: "remove" } | { kind: "replace"; blob: Blob };
 
 function required(client: ProductsClient | null): ProductsClient {
-  if (!client) throw new Error(NOT_CONFIGURED);
+  if (!client) throw new AdminError(NOT_CONFIGURED);
   return client;
 }
 
@@ -82,7 +94,7 @@ function field(error: unknown, key: string): string {
 }
 
 /** Traduz erros do Postgres/Storage/rede. Nunca repassa a mensagem técnica. */
-export function friendlyError(error: unknown): Error {
+export function friendlyError(error: unknown): AdminError {
   const code = field(error, "code");
   const status = field(error, "status") || field(error, "statusCode");
   const message = field(error, "message");
@@ -92,14 +104,14 @@ export function friendlyError(error: unknown): Error {
     status === "403" ||
     /row-level security|permission denied|unauthorized/i.test(message)
   ) {
-    return new Error(PERMISSION);
+    return new AdminError(PERMISSION);
   }
   if (
     /failed to fetch|fetch failed|networkerror|network request failed|load failed/i.test(message)
   ) {
-    return new Error(OFFLINE);
+    return new AdminError(OFFLINE);
   }
-  return new Error(GENERIC);
+  return new AdminError(GENERIC);
 }
 
 /** Roda uma consulta e devolve os dados, ou lança a mensagem amigável. */
@@ -173,31 +185,46 @@ async function uniqueSlug(base: string, client: ProductsClient): Promise<string>
 }
 
 /**
- * Cria ou atualiza um produto. Na criação o slug vem do nome (único); ao editar ele
- * não muda, para os links do site continuarem valendo. Dados inválidos lançam
- * ValidationError antes de qualquer gravação.
+ * Como gravar a foto ao editar: `omit` não mexe em image_path (outra janela pode ter
+ * trocado a foto); `set` grava `path` e, com `expected`, só se a foto no banco ainda
+ * for essa.
  */
-export async function saveProduct(
+type ImageWrite =
+  { kind: "omit" } | { kind: "set"; path: string | null; expected?: string | null | undefined };
+
+async function writeProduct(
   input: ProductInput & { id?: string },
-  client: ProductsClient | null = getBrowserClient(),
+  image: ImageWrite,
+  db: ProductsClient,
 ): Promise<AdminProduct> {
   const fields = validateProductInput(input);
   if (Object.keys(fields).length > 0) throw new ValidationError(fields);
-  const db = required(client);
   const values: ProductValues = {
     name: input.name.trim(),
     description: input.description.trim(),
     category: input.category,
-    image_path: input.imagePath,
+    image_path: image.kind === "set" ? image.path : input.imagePath,
     available: input.available,
     published: input.published,
     sort_order: input.sortOrder,
   };
 
   if (input.id) {
-    const rows = await run(db.from("products").update(values).eq("id", input.id).select("*"));
+    const { image_path, ...rest } = values;
+    const byId = db
+      .from("products")
+      .update(image.kind === "omit" ? rest : { ...rest, image_path })
+      .eq("id", input.id);
+    const expected = image.kind === "set" ? image.expected : undefined;
+    const query =
+      expected === undefined
+        ? byId
+        : expected === null
+          ? byId.is("image_path", null)
+          : byId.eq("image_path", expected);
+    const rows = await run(query.select("*"));
     const [row] = (rows ?? []) as ProductRow[];
-    if (!row) throw new Error(NOT_FOUND);
+    if (!row) throw new AdminError(expected === undefined ? NOT_FOUND : CHANGED);
     return toAdminProduct(row);
   }
 
@@ -218,7 +245,19 @@ export async function saveProduct(
     if (!result.error) return toAdminProduct(result.data as ProductRow);
     if (field(result.error, "code") !== "23505") throw friendlyError(result.error);
   }
-  throw new Error(GENERIC);
+  throw new AdminError(GENERIC);
+}
+
+/**
+ * Cria ou atualiza um produto, gravando `imagePath` como veio. Na criação o slug vem
+ * do nome (único); ao editar ele não muda, para os links do site continuarem valendo.
+ * Dados inválidos lançam ValidationError antes de qualquer gravação.
+ */
+export async function saveProduct(
+  input: ProductInput & { id?: string },
+  client: ProductsClient | null = getBrowserClient(),
+): Promise<AdminProduct> {
+  return writeProduct(input, { kind: "set", path: input.imagePath }, required(client));
 }
 
 function randomHex(): string {
@@ -226,20 +265,25 @@ function randomHex(): string {
   return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+const EXTENSIONS: Partial<Record<string, string>> = { "image/webp": "webp", "image/jpeg": "jpg" };
+
 /**
- * Envia a foto já preparada (WebP). O nome do arquivo nunca vem do usuário:
- * `products/<slug>-<8 hex>.webp`. Devolve o caminho no bucket.
+ * Envia a foto já preparada (WebP ou JPEG; outro tipo é recusado sem enviar nada).
+ * O nome do arquivo nunca vem do usuário: `products/<slug>-<8 hex>.webp` (ou `.jpg`).
+ * Devolve o caminho no bucket.
  */
 export async function uploadProductImage(
   blob: Blob,
   slug: string,
   client: ProductsClient | null = getBrowserClient(),
 ): Promise<string> {
-  const path = `products/${slugify(slug) || "produto"}-${randomHex()}.webp`;
+  const extension = EXTENSIONS[blob.type];
+  if (!extension) throw new AdminError(GENERIC);
+  const path = `products/${slugify(slug) || "produto"}-${randomHex()}.${extension}`;
   await run(
     required(client)
       .storage.from(PRODUCT_IMAGES_BUCKET)
-      .upload(path, blob, { contentType: "image/webp", cacheControl: "31536000", upsert: false }),
+      .upload(path, blob, { contentType: blob.type, cacheControl: "31536000", upsert: false }),
   );
   return path;
 }
@@ -259,7 +303,10 @@ export async function removeProductImage(
 /**
  * Salva o produto aplicando a troca de foto com segurança: envia a nova, grava o
  * produto e só então apaga a antiga. Se a gravação falhar, apaga a nova (nada sobra).
- * `input.imagePath` é a foto que o produto tem hoje; `input.slug` (ao editar) dá nome ao arquivo.
+ * `input.imagePath` é a foto que o formulário viu ao abrir; `input.slug` (ao editar)
+ * dá nome ao arquivo. Ao editar:
+ *   - "keep" não grava image_path (não desfaz a troca feita em outra janela);
+ *   - "replace"/"remove" só gravam se a foto no banco ainda for a que o formulário viu.
  */
 export async function saveProductWithPhoto(
   input: ProductInput & { id?: string; slug?: string },
@@ -270,37 +317,43 @@ export async function saveProductWithPhoto(
   if (Object.keys(fields).length > 0) throw new ValidationError(fields);
   const db = required(client);
   const previous = input.imagePath;
+  // produto novo: não há foto anterior para conferir
+  const expected = input.id ? previous : undefined;
 
   let uploaded: string | null = null;
-  let imagePath = previous;
+  let image: ImageWrite = { kind: "omit" };
   if (photo.kind === "replace") {
     uploaded = await uploadProductImage(photo.blob, input.slug ?? slugify(input.name), db);
-    imagePath = uploaded;
+    image = { kind: "set", path: uploaded, expected };
   } else if (photo.kind === "remove") {
-    imagePath = null;
+    image = { kind: "set", path: null, expected };
   }
 
   let saved: AdminProduct;
   try {
-    // ao editar, o slug do banco não muda (saveProduct ignora `slug`)
-    saved = await saveProduct({ ...input, imagePath }, db);
+    // ao editar, o slug do banco não muda (`slug` só dá nome ao arquivo)
+    saved = await writeProduct(input, image, db);
   } catch (error) {
     if (uploaded) await removeProductImage(uploaded, db);
     throw error;
   }
-  if (previous && previous !== saved.imagePath) await removeProductImage(previous, db);
+  // a condição da gravação garante que `previous` era mesmo a foto do produto
+  if (image.kind === "set" && previous && previous !== saved.imagePath) {
+    await removeProductImage(previous, db);
+  }
   return saved;
 }
 
-/** Exclui o produto e depois, se der, a foto dele. */
+/** Exclui o produto e depois, se der, a foto que ele tinha no banco (não a da lista). */
 export async function deleteProduct(
   product: AdminProduct,
   client: ProductsClient | null = getBrowserClient(),
 ): Promise<void> {
   const db = required(client);
   const rows = await run(db.from("products").delete().eq("id", product.id).select("*"));
-  if (!(rows as unknown[] | null)?.length) throw new Error(NOT_FOUND);
-  if (product.imagePath) await removeProductImage(product.imagePath, db);
+  const [row] = (rows ?? []) as ProductRow[];
+  if (!row) throw new AdminError(NOT_FOUND);
+  if (row.image_path) await removeProductImage(row.image_path, db);
 }
 
 async function setFlag(
@@ -309,7 +362,7 @@ async function setFlag(
   client: ProductsClient | null,
 ): Promise<void> {
   const rows = await run(required(client).from("products").update(values).eq("id", id).select("*"));
-  if (!(rows as unknown[] | null)?.length) throw new Error(NOT_FOUND);
+  if (!(rows as unknown[] | null)?.length) throw new AdminError(NOT_FOUND);
 }
 
 /** Marca o produto como disponível ou em falta. */

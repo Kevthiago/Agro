@@ -16,17 +16,22 @@ const categoryLabel = (slug: string) => CATEGORIES.find((c) => c.slug === slug)?
 
 /** Lista dos produtos com as ações de cada um. Textos sempre como texto (nunca HTML). */
 export default function ProductList({ products, onEdit, onToggle, onDelete }: Props) {
-  // produto com gravação em andamento: as ações dele ficam travadas
-  const [busy, setBusy] = useState<string | null>(null);
+  // produtos com gravação em andamento: as ações de cada um ficam travadas
+  const [busy, setBusy] = useState<ReadonlySet<string>>(new Set());
   const [confirming, setConfirming] = useState<AdminProduct | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
 
   async function run(product: AdminProduct, action: () => Promise<void>) {
-    setBusy(product.id);
+    setBusy((ids) => new Set(ids).add(product.id));
     try {
       await action();
     } finally {
-      setBusy(null);
+      // libera só este produto: outro que ainda grava continua travado
+      setBusy((ids) => {
+        const next = new Set(ids);
+        next.delete(product.id);
+        return next;
+      });
     }
   }
 
@@ -46,7 +51,7 @@ export default function ProductList({ products, onEdit, onToggle, onDelete }: Pr
     <>
       <ul class="admin-produtos" aria-labelledby="lista-titulo">
         {products.map((product) => {
-          const saving = busy === product.id;
+          const saving = busy.has(product.id);
           // Travados sem `disabled`: um controle desativado perde o foco do teclado.
           const blockWhileSaving = (e: MouseEvent) => saving && e.preventDefault();
           return (

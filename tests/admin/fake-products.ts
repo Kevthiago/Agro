@@ -12,6 +12,7 @@ interface Query extends PromiseLike<Res> {
   order(column: string): Query;
   eq(column: string, value: string): Query;
   like(column: string, pattern: string): Query;
+  is(column: string, value: null): Query;
   single(): Query;
 }
 
@@ -123,6 +124,10 @@ export function fakeProductsClient(initial: ProductRow[] = []) {
         filters.push((r) => String(r[column as keyof ProductRow]).startsWith(prefix));
         return builder;
       },
+      is: (column, value) => (
+        filters.push((r) => r[column as keyof ProductRow] === value),
+        builder
+      ),
       single: () => ((single = true), builder),
       then: (onFulfilled, onRejected) => gate.then(run).then(onFulfilled, onRejected),
     };

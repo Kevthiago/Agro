@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/preact";
 import ProductList from "@/admin/ProductList";
 import ProductsPanel from "@/admin/ProductsPanel";
+import type { ProductsClient, SelectQuery } from "@/admin/products-api";
+import type { ProductRow } from "@/lib/types";
 import type { AdminProduct } from "@/admin/types";
 import { fakeProductsClient, productRow } from "./fake-products";
 
@@ -23,6 +25,28 @@ const product = (over: Partial<AdminProduct> = {}): AdminProduct => ({
 });
 
 const noop = async () => {};
+
+/** Promessa controlada pelo teste. */
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>((r) => (resolve = r));
+  return { promise, resolve };
+}
+
+/** Busca da lista que só responde quando o teste mandar (para respostas fora de ordem). */
+function heldSelect(pending: ((rows: ProductRow[]) => void)[]): SelectQuery {
+  let respond!: (rows: ProductRow[]) => void;
+  const result = new Promise<{ data: unknown; error: unknown }>(
+    (r) => (respond = (rows) => r({ data: rows, error: null })),
+  );
+  pending.push(respond);
+  const query: SelectQuery = {
+    order: () => query,
+    like: () => query,
+    then: (onFulfilled, onRejected) => result.then(onFulfilled, onRejected),
+  };
+  return query;
+}
 
 describe("<ProductList />", () => {
   it("mostra miniatura, nome, categoria e as marcas Em falta / Oculto no site", () => {
@@ -72,6 +96,34 @@ describe("<ProductList />", () => {
     expect(document.querySelector("li b")).toBeNull();
   });
 
+  it("duas chaves seguidas em produtos diferentes não destravam uma à outra", async () => {
+    const calls = new Map<string, ReturnType<typeof deferred>>();
+    render(
+      <ProductList
+        products={[product(), product({ id: "p2", name: "Pá" })]}
+        onEdit={() => {}}
+        onToggle={(p) => {
+          const call = deferred();
+          calls.set(p.id, call);
+          return call.promise;
+        }}
+        onDelete={noop}
+      />,
+    );
+    const arame = screen.getByRole("checkbox", { name: "Disponível (Arame)" });
+    const pa = screen.getByRole("checkbox", { name: "Disponível (Pá)" });
+    fireEvent.click(arame);
+    fireEvent.click(pa);
+    await waitFor(() => expect(pa.getAttribute("aria-disabled")).toBe("true"));
+    expect(arame.getAttribute("aria-disabled")).toBe("true");
+
+    calls.get("p1")!.resolve();
+    await waitFor(() => expect(arame.getAttribute("aria-disabled")).toBeNull());
+    expect(pa.getAttribute("aria-disabled")).toBe("true");
+    calls.get("p2")!.resolve();
+    await waitFor(() => expect(pa.getAttribute("aria-disabled")).toBeNull());
+  });
+
   it("Excluir abre a confirmação com o nome; Cancelar não exclui", async () => {
     const deleted: string[] = [];
     render(
@@ -94,6 +146,44 @@ describe("<ProductList />", () => {
 });
 
 describe("<ProductsPanel />", () => {
+  it("exceção inesperada ao carregar mostra a mensagem genérica, nunca o texto técnico", async () => {
+    const { client } = fakeProductsClient();
+    client.from.mockImplementation(() => {
+      throw new TypeError("boom");
+    });
+    render(<ProductsPanel client={client} />);
+    const text = await screen.findByText(/Não foi possível carregar os produtos/);
+    expect(text.textContent).toContain("Algo deu errado. Tente de novo.");
+    expect(document.body.textContent).not.toContain("boom");
+  });
+
+  it("buscas sobrepostas: vale só a mais recente, mesmo chegando antes", async () => {
+    const fake = fakeProductsClient([
+      productRow(),
+      productRow({ id: "p2", slug: "pa", name: "Pá", sort_order: 1 }),
+    ]);
+    const pending: ((rows: ProductRow[]) => void)[] = [];
+    const client: ProductsClient = {
+      storage: fake.client.storage,
+      from: () => ({ ...fake.client.from(), select: () => heldSelect(pending) }),
+    };
+    render(<ProductsPanel client={client} />);
+    pending[0]!(fake.rows.map((r) => ({ ...r })));
+    const arame = await screen.findByRole("checkbox", { name: "Disponível (Arame)" });
+
+    fireEvent.click(arame);
+    await waitFor(() => expect(pending).toHaveLength(2));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Disponível (Pá)" }));
+    await waitFor(() => expect(pending).toHaveLength(3));
+
+    // a mais nova (as duas em falta) chega primeiro; a antiga (só Arame em falta) depois
+    pending[2]!(fake.rows.map((r) => ({ ...r })));
+    await waitFor(() => expect(screen.getAllByText("Em falta")).toHaveLength(2));
+    pending[1]!(fake.rows.map((r) => ({ ...r, available: r.id !== "p1" })));
+    await new Promise((r) => setTimeout(r, 20));
+    expect(screen.getAllByText("Em falta")).toHaveLength(2);
+  });
+
   it("mostra carregando enquanto busca", () => {
     const { client, pause } = fakeProductsClient();
     pause();

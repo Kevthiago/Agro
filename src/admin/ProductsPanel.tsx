@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { friendlyMessage } from "@/admin/errors";
 import ProductForm from "@/admin/ProductForm";
 import ProductList, { type ToggleField } from "@/admin/ProductList";
 import {
@@ -18,9 +19,6 @@ type Load = "loading" | "error" | "ready";
 /** `undefined` = lista; `null` = produto novo; produto = editando. */
 type Editing = AdminProduct | null | undefined;
 
-const message = (error: unknown) =>
-  error instanceof Error ? error.message : "Algo deu errado. Tente de novo.";
-
 /** Tela principal do painel: lista dos produtos e o formulário de cadastro/edição. */
 export default function ProductsPanel({ client }: Props) {
   const [products, setProducts] = useState<AdminProduct[]>([]);
@@ -34,13 +32,19 @@ export default function ProductsPanel({ client }: Props) {
   const listHeading = useRef<HTMLHeadingElement>(null);
   // para onde o foco volta quando o formulário fecha
   const focusAfterClose = useRef<"new" | "list" | null>(null);
+  // número da última busca: uma resposta antiga que chega depois não apaga a mais nova
+  const latest = useRef(0);
 
   async function refresh() {
+    const request = ++latest.current;
     try {
-      setProducts(await listProducts(client));
+      const list = await listProducts(client);
+      if (request !== latest.current) return;
+      setProducts(list);
       setLoad("ready");
     } catch (error) {
-      setLoadError(message(error));
+      if (request !== latest.current) return;
+      setLoadError(friendlyMessage(error));
       setLoad("error");
     }
   }
@@ -85,7 +89,7 @@ export default function ProductsPanel({ client }: Props) {
       await action();
       setStatus(done);
     } catch (error) {
-      setAlert(message(error));
+      setAlert(friendlyMessage(error));
     }
     await refresh();
   }

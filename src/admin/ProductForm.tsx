@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { AdminError, friendlyMessage } from "@/admin/errors";
 import { prepareImage } from "@/admin/image";
 import {
   ValidationError,
@@ -86,8 +87,11 @@ export default function ProductForm({
       setPhoto({ kind: "replace", blob });
       setPreview(URL.createObjectURL(blob));
     } catch (error) {
+      // só mensagens nossas aparecem; qualquer outra falha vira o aviso padrão da foto
       const text =
-        error instanceof Error ? error.message : "Não conseguimos abrir essa foto. Tente outra.";
+        error instanceof AdminError
+          ? error.message
+          : "Não conseguimos abrir essa foto. Tente outra.";
       setErrors((e) => ({ ...e, photo: text }));
     } finally {
       setPreparing(false);
@@ -139,7 +143,7 @@ export default function ProductForm({
       onSaved(saved);
     } catch (error) {
       if (error instanceof ValidationError) showErrors(error.fields);
-      else setFormError(error instanceof Error ? error.message : "Algo deu errado. Tente de novo.");
+      else setFormError(friendlyMessage(error));
     } finally {
       setSaving(false);
     }

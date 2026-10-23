@@ -9,6 +9,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
+  CHANGED,
   NOT_FOUND,
   PERMISSION,
   deleteProduct,
@@ -42,6 +43,9 @@ const input = (over: Partial<ProductInput> = {}): ProductInput => ({
   sortOrder: 0,
   ...over,
 });
+
+/** JPEG mínimo (o Storage confere o tipo declarado, não o conteúdo). */
+const jpeg = () => new Blob([Uint8Array.of(0xff, 0xd8, 0xff, 0xd9)], { type: "image/jpeg" });
 
 /** WebP mínimo válido (1x1). */
 const webp = () =>
@@ -126,15 +130,34 @@ describe.skipIf(!enabled)("products-api contra o Supabase local", () => {
     expect(withPhoto.imagePath).toMatch(new RegExp(`^products/${SLUG}-[0-9a-f]{8}\\.webp$`));
     expect(await filesIn()).toEqual([withPhoto.imagePath]);
 
+    // troca por JPEG (caminho do Safari/iPhone)
     const replaced = await saveProductWithPhoto(
       { ...input({ imagePath: withPhoto.imagePath }), id: first.id },
-      { kind: "replace", blob: webp() },
+      { kind: "replace", blob: jpeg() },
       editor,
     );
-    expect(replaced.imagePath).not.toBe(withPhoto.imagePath);
+    expect(replaced.imagePath).toMatch(new RegExp(`^products/${SLUG}-[0-9a-f]{8}\\.jpg$`));
+    expect(await filesIn()).toEqual([replaced.imagePath]);
+    const stored = await service.storage.from(PRODUCT_IMAGES_BUCKET).list("products", {
+      search: replaced.imagePath!.slice("products/".length),
+    });
+    expect(stored.data?.[0]?.metadata?.mimetype).toBe("image/jpeg");
+
+    // janela antiga (ainda vê a foto WebP) salva só o nome: a foto JPEG continua
+    const stale = {
+      ...input({ name: `${NAME} velho`, imagePath: withPhoto.imagePath }),
+      id: first.id,
+    };
+    const kept = await saveProductWithPhoto(stale, { kind: "keep" }, editor);
+    expect(kept.imagePath).toBe(replaced.imagePath);
+    // e não consegue trocar a foto por cima da troca que não viu
+    await expect(
+      saveProductWithPhoto(stale, { kind: "replace", blob: webp() }, editor),
+    ).rejects.toThrow(CHANGED);
     expect(await filesIn()).toEqual([replaced.imagePath]);
 
-    await deleteProduct(replaced, editor);
+    // exclusão pela lista antiga apaga a foto que o banco tinha de verdade
+    await deleteProduct({ ...withPhoto }, editor);
     await deleteProduct(second, editor);
     expect(await filesIn()).toEqual([]);
     const { data } = await service.from("products").select("id").like("slug", `${SLUG}%`);

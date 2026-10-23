@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/preact";
+import { AdminError } from "@/admin/errors";
 import ProductForm from "@/admin/ProductForm";
 import type { AdminProduct } from "@/admin/types";
 import { fakeProductsClient, productRow } from "./fake-products";
@@ -158,7 +159,7 @@ describe("<ProductForm />", () => {
 
   it("foto recusada mostra a mensagem no campo da foto", async () => {
     const prepare = vi.fn<Prepare>(async () => {
-      throw new Error("Envie uma imagem JPG, PNG ou WebP.");
+      throw new AdminError("Envie uma imagem JPG, PNG ou WebP.");
     });
     setup(null, prepare);
     chooseFile(new File(["x"], "notas.txt", { type: "text/plain" }));
@@ -167,6 +168,32 @@ describe("<ProductForm />", () => {
     expect(
       document.getElementById(input.getAttribute("aria-describedby")!.split(" ")[0]!)?.textContent,
     ).toBe("Envie uma imagem JPG, PNG ou WebP.");
+  });
+
+  it("falha inesperada no preparo da foto não mostra o texto técnico", async () => {
+    setup(
+      null,
+      vi.fn<Prepare>(async () => {
+        throw new TypeError("boom");
+      }),
+    );
+    chooseFile(new File(["x"], "foto.jpg", { type: "image/jpeg" }));
+    expect(await screen.findByText("Não conseguimos abrir essa foto. Tente outra.")).toBeTruthy();
+    expect(document.body.textContent).not.toContain("boom");
+  });
+
+  it("exceção inesperada ao salvar mostra a mensagem genérica, nunca o texto técnico", async () => {
+    const { client, onSaved } = setup();
+    client.from.mockImplementation(() => {
+      throw new TypeError("boom");
+    });
+    fireEvent.input(screen.getByLabelText("Nome"), { target: { value: "Enxada" } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar produto" }));
+    await waitFor(() =>
+      expect(screen.getByRole("alert").textContent).toBe("Algo deu errado. Tente de novo."),
+    );
+    expect(document.body.textContent).not.toContain("boom");
+    expect(onSaved).not.toHaveBeenCalled();
   });
 
   it("erro do servidor aparece num alerta amigável e o botão volta", async () => {

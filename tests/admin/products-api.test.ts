@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { AdminError } from "@/admin/errors";
 import {
+  CHANGED,
   ValidationError,
   deleteProduct,
   listProducts,
@@ -103,7 +105,7 @@ describe("listProducts", () => {
     const { client, fail } = fakeProductsClient();
     fail.select.push({ message: 'relation "products" does not exist', code: "42P01" });
     await expect(listProducts(client)).rejects.toThrow(
-      new Error("Algo deu errado. Tente de novo."),
+      new AdminError("Algo deu errado. Tente de novo."),
     );
   });
 });
@@ -166,7 +168,7 @@ describe("saveProduct", () => {
       code: "42501",
       message: 'new row violates row-level security policy for table "products"',
     });
-    await expect(saveProduct(input(), client)).rejects.toThrow(new Error(PERMISSION));
+    await expect(saveProduct(input(), client)).rejects.toThrow(new AdminError(PERMISSION));
   });
 
   it("editar produto que não existe mais avisa", async () => {
@@ -188,6 +190,27 @@ describe("fotos", () => {
       upsert: false,
     });
     expect(client.storage.from).toHaveBeenCalledWith("product-images");
+  });
+
+  it("JPEG (Safari/iPhone) vai como .jpg com o tipo image/jpeg", async () => {
+    const { client, bucket } = fakeProductsClient();
+    const jpeg = new Blob([new Uint8Array(10)], { type: "image/jpeg" });
+    const path = await uploadProductImage(jpeg, "arame", client);
+    expect(path).toMatch(/^products\/arame-[0-9a-f]{8}\.jpg$/);
+    expect(bucket.upload).toHaveBeenCalledWith(path, jpeg, {
+      contentType: "image/jpeg",
+      cacheControl: "31536000",
+      upsert: false,
+    });
+  });
+
+  it("outro tipo (PNG) é recusado sem enviar nada", async () => {
+    const { client, bucket } = fakeProductsClient();
+    const png = new Blob([new Uint8Array(10)], { type: "image/png" });
+    const error = await uploadProductImage(png, "arame", client).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(AdminError);
+    expect((error as Error).message).toBe("Algo deu errado. Tente de novo.");
+    expect(bucket.upload).not.toHaveBeenCalled();
   });
 
   it("falha no envio por permissão vira mensagem amigável", async () => {
@@ -266,6 +289,63 @@ describe("fotos", () => {
     expect(log).toEqual(["update:p1", `remove:${old}`]);
   });
 
+  it("manter foto não grava image_path (não desfaz a troca feita em outra janela)", async () => {
+    // a outra janela já trocou a foto para Y; esta abriu com X e só muda o nome
+    const { client, rows, log } = fakeProductsClient([
+      productRow({ image_path: "products/arame-yyyyyyyy.webp" }),
+    ]);
+    await saveProductWithPhoto(
+      { ...input({ name: "Arame novo", imagePath: "products/arame-xxxxxxxx.webp" }), id: "p1" },
+      { kind: "keep" },
+      client,
+    );
+    expect(rows[0]!.name).toBe("Arame novo");
+    expect(rows[0]!.image_path).toBe("products/arame-yyyyyyyy.webp");
+    expect(log).toEqual(["update:p1"]);
+  });
+
+  it("trocar foto que mudou em outra janela: nada gravado, nova apagada, aviso", async () => {
+    const { client, rows, files, log } = fakeProductsClient([
+      productRow({ image_path: "products/arame-yyyyyyyy.webp" }),
+    ]);
+    files.add("products/arame-yyyyyyyy.webp");
+    const error = await saveProductWithPhoto(
+      { ...input({ imagePath: "products/arame-xxxxxxxx.webp" }), id: "p1" },
+      { kind: "replace", blob: webp() },
+      client,
+    ).catch((e: unknown) => e);
+    expect((error as Error).message).toBe(CHANGED);
+    expect(rows[0]!.image_path).toBe("products/arame-yyyyyyyy.webp");
+    expect([...files]).toEqual(["products/arame-yyyyyyyy.webp"]);
+    expect(log.map((l) => l.split(":")[0])).toEqual(["upload", "update", "remove"]);
+  });
+
+  it("remover foto que mudou em outra janela não apaga a foto nova", async () => {
+    const { client, rows, files } = fakeProductsClient([
+      productRow({ image_path: "products/arame-yyyyyyyy.webp" }),
+    ]);
+    files.add("products/arame-yyyyyyyy.webp");
+    await expect(
+      saveProductWithPhoto(
+        { ...input({ imagePath: "products/arame-xxxxxxxx.webp" }), id: "p1" },
+        { kind: "remove" },
+        client,
+      ),
+    ).rejects.toThrow(CHANGED);
+    expect(rows[0]!.image_path).toBe("products/arame-yyyyyyyy.webp");
+    expect([...files]).toEqual(["products/arame-yyyyyyyy.webp"]);
+  });
+
+  it("trocar foto de produto sem foto confere que continua sem foto", async () => {
+    const { client, rows } = fakeProductsClient([productRow({ image_path: null })]);
+    const saved = await saveProductWithPhoto(
+      { ...input(), id: "p1" },
+      { kind: "replace", blob: webp() },
+      client,
+    );
+    expect(rows[0]!.image_path).toBe(saved.imagePath);
+  });
+
   it("manter foto: não envia nem apaga nada", async () => {
     const old = "products/arame-00000000.webp";
     const { client, log } = fakeProductsClient([productRow({ image_path: old })]);
@@ -294,6 +374,18 @@ describe("excluir e alternar", () => {
     await deleteProduct(product!, client);
     expect(rows).toHaveLength(0);
     expect(log).toEqual(["delete:p1", `remove:${path}`]);
+  });
+
+  it("exclusão apaga a foto que o banco devolveu, não a da lista antiga", async () => {
+    const { client, log } = fakeProductsClient([
+      productRow({ image_path: "products/arame-yyyyyyyy.webp" }),
+    ]);
+    const stale = {
+      ...(await listProducts(client))[0]!,
+      imagePath: "products/arame-xxxxxxxx.webp",
+    };
+    await deleteProduct(stale, client);
+    expect(log).toEqual(["delete:p1", "remove:products/arame-yyyyyyyy.webp"]);
   });
 
   it("se a exclusão falha, a foto continua", async () => {
