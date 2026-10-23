@@ -1,0 +1,128 @@
+/* Painel da loja: controles grandes e legíveis, na linguagem "Balcão". Só tokens. */
+
+.admin-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-petroleo-escuro);
+  color: var(--color-branco);
+}
+
+.admin-barra img {
+  padding: 0.25rem 0.5rem;
+  border-radius: 2px;
+  background: var(--color-branco);
+}
+
+.admin-barra-nome {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.admin-corpo {
+  padding: 2.5rem 1rem 4rem;
+}
+
+.admin-cartao {
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: 1.75rem 1.25rem 2rem;
+  background: var(--color-branco);
+  border-bottom: 0.75rem solid var(--color-madeira);
+}
+
+.admin-cartao-largo {
+  max-width: 72rem;
+}
+
+.admin-titulo {
+  font-size: clamp(2.5rem, 9vw, 3.25rem);
+  color: var(--color-petroleo-escuro);
+}
+
+.admin-titulo:focus {
+  outline: none;
+}
+
+.admin-campo {
+  min-height: 3.25rem;
+  padding: 0.5rem 0.875rem;
+  border: 2px solid var(--color-tinta);
+  border-radius: 2px;
+  background: var(--color-branco);
+  font-size: 1.125rem;
+}
+
+.admin-botao {
+  min-height: 3.25rem;
+  padding: 0.625rem 1.5rem;
+  border: 2px solid var(--color-tinta);
+  border-radius: 2px;
+  background: var(--color-laranja);
+  color: var(--color-tinta);
+  font-weight: 700;
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+
+.admin-botao:hover:not(:disabled) {
+  background: var(--color-palha);
+}
+
+.admin-botao:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.admin-botao-claro {
+  background: var(--color-branco);
+}
+
+.admin-botao-sair {
+  margin-left: auto;
+  min-height: 2.75rem;
+  padding-inline: 1.25rem;
+}
+
+.admin-ou {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+  font-weight: 600;
+}
+
+.admin-ou::before,
+.admin-ou::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--color-tinta);
+}
+
+.admin-erro:not(:empty) {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 0.375rem solid var(--color-laranja);
+  background: var(--color-palha);
+  font-weight: 700;
+}
+
+.admin-carregando {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+  .admin-barra {
+    padding-inline: 1.75rem;
+  }
+
+  .admin-cartao {
+    padding: 2.25rem 2.25rem 2.5rem;
+  }
+}

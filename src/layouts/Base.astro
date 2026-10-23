@@ -13,15 +13,16 @@ interface Props {
   image?: string;
   /** Tira a página dos buscadores (ex.: painel admin). */
   noindex?: boolean;
+  /** Sem cabeçalho, rodapé e botão do WhatsApp do site público (ex.: painel admin). */
+  bare?: boolean;
 }
 
-const { title, description, image = logo.src, noindex = false } = Astro.props;
+const { title, description, image = logo.src, noindex = false, bare = false } = Astro.props;
 
 const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
 // Endereços absolutos a partir de `site` (PUBLIC_SITE_URL, em astro.config).
 // Páginas fora dos buscadores (404, admin) não têm endereço canônico.
-const canonical =
-  Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
 ---
 
@@ -50,13 +51,15 @@ const imageUrl = Astro.site ? new URL(image, Astro.site).href : image;
     <slot name="head" />
   </head>
   <body class="flex min-h-dvh flex-col">
-    <a href="#conteudo" class="pular">Pular para o conteúdo</a>
-    <Header />
+    <a href="#conteudo" class="pular">
+      Pular para o conteúdo
+    </a>
+    {!bare && <Header />}
     <main id="conteudo" tabindex="-1" class="flex-1 focus:outline-none">
       <slot />
     </main>
-    <Footer />
-    <WhatsAppFloat />
+    {!bare && <Footer />}
+    {!bare && <WhatsAppFloat />}
   </body>
 </html>
 

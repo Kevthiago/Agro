@@ -1,0 +1,18 @@
+---
+import Base from "@/layouts/Base.astro";
+import App from "@/admin/App";
+import "@/admin/admin.css";
+---
+
+<Base
+  title="Painel da loja"
+  description="Área restrita para a equipe da loja editar o catálogo."
+  noindex
+  bare
+>
+  <!-- o painel roda só no navegador: nada de sessão ou dados no HTML gerado -->
+  <App client:only="preact" />
+  <noscript>
+    <p class="admin-corpo">O painel precisa do JavaScript ligado no navegador.</p>
+  </noscript>
+</Base>
