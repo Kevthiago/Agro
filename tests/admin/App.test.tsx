@@ -79,6 +79,51 @@ describe("<App />", () => {
     // o Preact roda a limpeza dos efeitos logo depois de desmontar
     await waitFor(() => expect(unsubscribe).toHaveBeenCalled());
   });
+
+  it("resposta atrasada de uma sessão antiga não abre o painel para a sessão nova", async () => {
+    const { client, emit } = fakeClient({ session: fakeSession("u1") });
+    // a verificação da sessão A fica pendurada até o fim do teste
+    let resolveA!: (value: { data: unknown; error: unknown }) => void;
+    client.rpc.mockImplementationOnce(() => new Promise((resolve) => (resolveA = resolve)));
+    // registra se o painel aparece em qualquer momento, não só no fim
+    let panelSeen = false;
+    const observer = new MutationObserver(() => {
+      if (document.body.textContent?.includes("Painel de produtos")) panelSeen = true;
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+    render(<App client={client} />);
+    await waitFor(() => expect(client.rpc).toHaveBeenCalledTimes(1));
+
+    emit("SIGNED_OUT", null);
+    await screen.findByRole("button", { name: "Entrar" });
+    emit("SIGNED_IN", fakeSession("u2")); // rpc padrão do fake: false
+    expect(await screen.findByText(DENIED)).toBeTruthy();
+    expect(client.rpc).toHaveBeenCalledTimes(2);
+
+    resolveA({ data: true, error: null });
+    await new Promise((r) => setTimeout(r, 20));
+    observer.disconnect();
+
+    expect(panelSeen).toBe(false);
+    expect(screen.queryByRole("heading", { name: "Painel de produtos" })).toBeNull();
+    expect(screen.getByText(DENIED)).toBeTruthy();
+  });
+
+  it("renovação do token da mesma pessoa não consulta a permissão de novo", async () => {
+    const { client, emit } = fakeClient({
+      session: fakeSession("u1"),
+      rpc: { data: true, error: null },
+    });
+    render(<App client={client} />);
+    await screen.findByRole("heading", { name: "Painel de produtos" });
+
+    emit("TOKEN_REFRESHED", fakeSession("u1"));
+    await new Promise((r) => setTimeout(r, 20));
+
+    expect(client.rpc).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("heading", { name: "Painel de produtos" })).toBeTruthy();
+  });
 });
 
 describe("<LoginScreen /> dentro do <App />", () => {

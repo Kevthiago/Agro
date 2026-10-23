@@ -50,7 +50,8 @@ export function fakeClient(options: FakeOptions = {}) {
       ),
       signOut: vi.fn<AdminClient["auth"]["signOut"]>(() => Promise.resolve({ error: null })),
     },
-    rpc: vi.fn(() =>
+    // tipado pela interface: cada chamada pode ganhar uma resposta própria (mockImplementationOnce)
+    rpc: vi.fn<AdminClient["rpc"]>(() =>
       rpcResult instanceof Error ? Promise.reject(rpcResult) : Promise.resolve(rpcResult),
     ),
   } satisfies AdminClient;
