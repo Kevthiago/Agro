@@ -16,7 +16,8 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "pretest:e2e": "node scripts/build-e2e.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "seed": "node scripts/seed-products.ts"
   },
   "dependencies": {
     "@astrojs/preact": "6.1.1",
@@ -40,6 +41,7 @@
     "happy-dom": "21.0.4",
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.1",
+    "sharp": "0.35.5",
     "supabase": "2.121.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.0",
