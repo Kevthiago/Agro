@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { AuthApiError, AuthRetryableFetchError } from "@supabase/supabase-js";
 import { checkIsEditor, signInWithGoogle, signInWithPassword, signOut } from "@/admin/auth";
+import { AdminError } from "@/admin/errors";
 import { fakeClient } from "./fake-client";
 
 // Ambiente node: a origem da página é simulada.
@@ -8,6 +9,7 @@ vi.stubGlobal("location", { origin: "https://loja.example" });
 
 const WRONG = "E-mail ou senha incorretos.";
 const OFFLINE = "Não foi possível entrar agora. Verifique a conexão e tente de novo.";
+const GOOGLE = "Não foi possível entrar com o Google agora. Tente de novo.";
 
 describe("checkIsEditor", () => {
   it("é editor só quando o banco responde true", async () => {
@@ -54,7 +56,9 @@ describe("signInWithPassword", () => {
     ]) {
       const { client } = fakeClient();
       client.auth.signInWithPassword.mockResolvedValueOnce({ data: {}, error });
-      await expect(signInWithPassword("a@b.com", "x", client)).rejects.toThrow(new Error(WRONG));
+      await expect(signInWithPassword("a@b.com", "x", client)).rejects.toThrow(
+        new AdminError(WRONG),
+      );
     }
   });
 
@@ -64,10 +68,24 @@ describe("signInWithPassword", () => {
       data: {},
       error: new AuthRetryableFetchError("Failed to fetch", 0),
     });
-    await expect(signInWithPassword("a@b.com", "x", client)).rejects.toThrow(new Error(OFFLINE));
+    await expect(signInWithPassword("a@b.com", "x", client)).rejects.toThrow(
+      new AdminError(OFFLINE),
+    );
 
     client.auth.signInWithPassword.mockRejectedValueOnce(new TypeError("Failed to fetch"));
-    await expect(signInWithPassword("a@b.com", "x", client)).rejects.toThrow(new Error(OFFLINE));
+    await expect(signInWithPassword("a@b.com", "x", client)).rejects.toThrow(
+      new AdminError(OFFLINE),
+    );
+  });
+
+  it("as mensagens são AdminError (podem aparecer na tela)", async () => {
+    const { client } = fakeClient();
+    client.auth.signInWithPassword.mockResolvedValueOnce({
+      data: {},
+      error: new AuthApiError("Invalid login credentials", 400, "invalid_credentials"),
+    });
+    const thrown = await signInWithPassword("a@b.com", "x", client).catch((e: unknown) => e);
+    expect(thrown).toBeInstanceOf(AdminError);
   });
 });
 
@@ -79,6 +97,17 @@ describe("signInWithGoogle", () => {
       provider: "google",
       options: { redirectTo: `${location.origin}/admin` },
     });
+  });
+
+  it("recusa ou falha do Google vira mensagem própria (AdminError)", async () => {
+    const { client } = fakeClient();
+    client.auth.signInWithOAuth.mockResolvedValueOnce({ data: {}, error: new Error("raw") });
+    await expect(signInWithGoogle(client)).rejects.toThrow(new AdminError(GOOGLE));
+
+    client.auth.signInWithOAuth.mockRejectedValueOnce(new TypeError("boom"));
+    const thrown = await signInWithGoogle(client).catch((e: unknown) => e);
+    expect(thrown).toBeInstanceOf(AdminError);
+    expect((thrown as Error).message).toBe(GOOGLE);
   });
 });
 

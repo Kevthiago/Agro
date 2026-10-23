@@ -5,12 +5,13 @@ import { checkIsEditor, signOut, type AdminClient } from "@/admin/auth";
 import LoginScreen from "@/admin/LoginScreen";
 import ProductsPanel from "@/admin/ProductsPanel";
 import type { ProductsClient } from "@/admin/products-api";
+import type { PublishClient } from "@/admin/publish";
 import { getBrowserClient } from "@/admin/supabase-browser";
 
 type View = "loading" | "signedOut" | "denied" | "editor";
 
-/** O que o painel inteiro usa do cliente Supabase: entrar e editar produtos. */
-export type PanelClient = AdminClient & ProductsClient;
+/** O que o painel inteiro usa do cliente Supabase: entrar, editar produtos e publicar. */
+export type PanelClient = AdminClient & ProductsClient & PublishClient;
 
 interface Props {
   /** Injetável nos testes; `null` = variáveis do Supabase ausentes. */

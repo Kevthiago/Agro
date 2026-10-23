@@ -5,6 +5,7 @@ import {
   type SignInWithOAuthCredentials,
   type SignInWithPasswordCredentials,
 } from "@supabase/supabase-js";
+import { AdminError } from "@/admin/errors";
 import { getBrowserClient } from "@/admin/supabase-browser";
 
 /** O que o painel usa do cliente Supabase (permite um cliente falso nos testes). */
@@ -24,9 +25,10 @@ export interface AdminClient {
 const WRONG_CREDENTIALS = "E-mail ou senha incorretos.";
 const OFFLINE = "Não foi possível entrar agora. Verifique a conexão e tente de novo.";
 const NOT_CONFIGURED = "Painel não configurado.";
+const GOOGLE_FAILED = "Não foi possível entrar com o Google agora. Tente de novo.";
 
 function required(client: AdminClient | null): AdminClient {
-  if (!client) throw new Error(NOT_CONFIGURED);
+  if (!client) throw new AdminError(NOT_CONFIGURED);
   return client;
 }
 
@@ -34,12 +36,18 @@ function required(client: AdminClient | null): AdminClient {
 export async function signInWithGoogle(
   client: AdminClient | null = getBrowserClient(),
 ): Promise<void> {
-  const { error } = await required(client).auth.signInWithOAuth({
-    provider: "google",
-    // só a origem da página: nada do endereço atual vai para o redirecionamento
-    options: { redirectTo: `${location.origin}/admin` },
-  });
-  if (error) throw new Error(OFFLINE);
+  const auth = required(client).auth;
+  let error: unknown;
+  try {
+    ({ error } = await auth.signInWithOAuth({
+      provider: "google",
+      // só a origem da página: nada do endereço atual vai para o redirecionamento
+      options: { redirectTo: `${location.origin}/admin` },
+    }));
+  } catch {
+    throw new AdminError(GOOGLE_FAILED);
+  }
+  if (error) throw new AdminError(GOOGLE_FAILED);
 }
 
 /**
@@ -56,10 +64,10 @@ export async function signInWithPassword(
   try {
     ({ error } = await auth.signInWithPassword({ email, password }));
   } catch {
-    throw new Error(OFFLINE);
+    throw new AdminError(OFFLINE);
   }
   if (!error) return;
-  throw new Error(isAuthRetryableFetchError(error) ? OFFLINE : WRONG_CREDENTIALS);
+  throw new AdminError(isAuthRetryableFetchError(error) ? OFFLINE : WRONG_CREDENTIALS);
 }
 
 /** Sai da conta; se o servidor não responder, encerra ao menos a sessão deste aparelho. */

@@ -1,5 +1,6 @@
 import { vi } from "vitest";
 import type { ProductsClient } from "@/admin/products-api";
+import type { PublishClient } from "@/admin/publish";
 import type { ProductRow } from "@/lib/types";
 
 type Res = { data: unknown; error: unknown };
@@ -159,7 +160,13 @@ export function fakeProductsClient(initial: ProductRow[] = []) {
       delete: () => query("delete"),
     })),
     storage: { from: vi.fn<ProductsClient["storage"]["from"]>(() => bucket) },
-  } satisfies ProductsClient;
+    // o painel também tem o botão de publicar: publicação sempre aceita
+    functions: {
+      invoke: vi.fn<PublishClient["functions"]["invoke"]>(() =>
+        Promise.resolve({ data: { ok: true }, error: null }),
+      ),
+    },
+  } satisfies ProductsClient & PublishClient;
 
   return { client, rows, files, log, fail, bucket, pause };
 }

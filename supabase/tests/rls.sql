@@ -5,7 +5,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(66);
+select plan(102);
 
 -- ---------------------------------------------------------------------------
 -- Preparação (como postgres): usuários falsos, editores, produtos e um objeto
@@ -214,6 +214,76 @@ select ok((select updated_at = '2000-01-01' from public.products where slug = 'r
   'linha não alterada manteve updated_at');
 select results_eq($$select name from storage.objects where bucket_id = 'product-images' order by name$$,
   array['editor-2.webp', 'existente.webp'], 'imagem do editor está no bucket');
+
+-- ---------------------------------------------------------------------------
+-- publish_state (0002): só a service_role (Edge Function publish-site) usa
+-- ---------------------------------------------------------------------------
+select has_table('public', 'publish_state', 'tabela publish_state existe');
+select results_eq($$select id, last_publish_at from public.publish_state$$,
+  $$values (1, null::timestamptz)$$, 'publish_state tem uma única linha, ainda sem publicação');
+select is((select count(*)::int from pg_policies where schemaname = 'public' and tablename = 'publish_state'),
+  0, 'publish_state não tem políticas (nenhum cliente acessa)');
+select table_privs_are('public', 'publish_state', 'anon', array[]::text[],
+  'anon não tem privilégios em publish_state');
+select table_privs_are('public', 'publish_state', 'authenticated', array[]::text[],
+  'authenticated não tem privilégios em publish_state');
+select table_privs_are('public', 'publish_state', 'service_role', array['SELECT', 'UPDATE'],
+  'service_role só lê e atualiza publish_state');
+select function_privs_are('public', 'claim_publish_slot', array[]::text[], 'anon', array[]::text[],
+  'anon não executa claim_publish_slot()');
+select function_privs_are('public', 'claim_publish_slot', array[]::text[], 'authenticated', array[]::text[],
+  'authenticated não executa claim_publish_slot()');
+select function_privs_are('public', 'claim_publish_slot', array[]::text[], 'service_role', array['EXECUTE'],
+  'service_role executa claim_publish_slot()');
+select function_privs_are('public', 'release_publish_slot', array[]::text[], 'anon', array[]::text[],
+  'anon não executa release_publish_slot()');
+select function_privs_are('public', 'release_publish_slot', array[]::text[], 'authenticated', array[]::text[],
+  'authenticated não executa release_publish_slot()');
+select function_privs_are('public', 'release_publish_slot', array[]::text[], 'service_role', array['EXECUTE'],
+  'service_role executa release_publish_slot()');
+
+-- anon
+set local role anon;
+set local request.jwt.claims = '{"role":"anon"}';
+select throws_ok($$select * from public.publish_state$$, '42501', null, 'anon não lê publish_state');
+select throws_ok($$insert into public.publish_state (id) values (1)$$, '42501', null, 'anon não insere em publish_state');
+select throws_ok($$update public.publish_state set last_publish_at = null$$, '42501', null, 'anon não altera publish_state');
+select throws_ok($$delete from public.publish_state$$, '42501', null, 'anon não apaga publish_state');
+select throws_ok($$select public.claim_publish_slot()$$, '42501', null, 'anon não reserva a vez de publicar');
+select throws_ok($$select public.release_publish_slot()$$, '42501', null, 'anon não libera a vez de publicar');
+
+-- authenticated fora de editors
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated","email":"intruso@teste.invalid"}';
+select throws_ok($$select * from public.publish_state$$, '42501', null, 'não editor não lê publish_state');
+select throws_ok($$insert into public.publish_state (id) values (1)$$, '42501', null, 'não editor não insere em publish_state');
+select throws_ok($$update public.publish_state set last_publish_at = null$$, '42501', null, 'não editor não altera publish_state');
+select throws_ok($$delete from public.publish_state$$, '42501', null, 'não editor não apaga publish_state');
+select throws_ok($$select public.claim_publish_slot()$$, '42501', null, 'não editor não reserva a vez de publicar');
+select throws_ok($$select public.release_publish_slot()$$, '42501', null, 'não editor não libera a vez de publicar');
+
+-- editor confirmado: também não acessa direto (só pela Edge Function)
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated","email":"editor@teste.invalid"}';
+select throws_ok($$select * from public.publish_state$$, '42501', null, 'editor não lê publish_state direto');
+select throws_ok($$insert into public.publish_state (id) values (1)$$, '42501', null, 'editor não insere em publish_state');
+select throws_ok($$update public.publish_state set last_publish_at = null$$, '42501', null, 'editor não altera publish_state direto');
+select throws_ok($$delete from public.publish_state$$, '42501', null, 'editor não apaga publish_state');
+select throws_ok($$select public.claim_publish_slot()$$, '42501', null, 'editor não reserva a vez direto');
+select throws_ok($$select public.release_publish_slot()$$, '42501', null, 'editor não libera a vez direto');
+
+-- service_role: uma publicação a cada 60 s
+reset role;
+set local role service_role;
+select is(public.claim_publish_slot(), true, 'service_role reserva a vez quando não houve publicação');
+select is(public.claim_publish_slot(), false, 'segunda reserva dentro de 60 s é recusada');
+select throws_ok($$insert into public.publish_state (id) values (2)$$, '42501', null, 'service_role não insere em publish_state');
+select lives_ok($$select public.release_publish_slot()$$, 'service_role libera a vez');
+select is(public.claim_publish_slot(), true, 'depois de liberar, a reserva volta a funcionar');
+reset role;
+update public.publish_state set last_publish_at = now() - interval '61 seconds';
+set local role service_role;
+select is(public.claim_publish_slot(), true, 'passados 60 s, a reserva funciona de novo');
+reset role;
 
 select * from finish();
 rollback;

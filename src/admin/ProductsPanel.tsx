@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { friendlyMessage } from "@/admin/errors";
 import ProductForm from "@/admin/ProductForm";
 import ProductList, { type ToggleField } from "@/admin/ProductList";
+import PublishButton from "@/admin/PublishButton";
+import type { PublishClient } from "@/admin/publish";
 import {
   deleteProduct,
   listProducts,
@@ -12,7 +14,7 @@ import {
 import type { AdminProduct } from "@/admin/types";
 
 interface Props {
-  client: ProductsClient;
+  client: ProductsClient & PublishClient;
 }
 
 type Load = "loading" | "error" | "ready";
@@ -116,8 +118,9 @@ export default function ProductsPanel({ client }: Props) {
         <h1 id="produtos-titulo" class="admin-titulo">
           Painel de produtos
         </h1>
-        {/* Lugar do botão "Publicar alterações" (Task 12). */}
-        <div class="admin-publicar" />
+        <div class="admin-publicar">
+          <PublishButton client={client} />
+        </div>
       </div>
 
       <p role="status" class="admin-aviso">

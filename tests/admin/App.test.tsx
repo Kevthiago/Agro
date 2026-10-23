@@ -151,3 +151,16 @@ describe("<LoginScreen /> dentro do <App />", () => {
     );
   });
 });
+
+describe("Publicar alterações no painel", () => {
+  it("editor vê o botão de publicar, que chama a função publish-site", async () => {
+    const { client } = fakeClient({ session: fakeSession(), rpc: { data: true, error: null } });
+    render(<App client={client} />);
+    const publish = await screen.findByRole("button", { name: "Publicar alterações" });
+    fireEvent.click(publish);
+    await waitFor(() =>
+      expect(screen.getByText("Publicado. O site atualiza em 1 a 2 minutos.")).toBeTruthy(),
+    );
+    expect(client.functions.invoke).toHaveBeenCalledWith("publish-site", { method: "POST" });
+  });
+});

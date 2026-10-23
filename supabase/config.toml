@@ -20,7 +20,8 @@ max_rows = 1000
 # `postgres` are reachable through the Data API roles (`anon`, `authenticated`, `service_role`)
 # without explicit GRANTs, matching the cloud default. Set to `false` to require explicit GRANTs
 # instead. Left unset, a fresh project falls back to `true`.
-# auto_expose_new_tables = true
+# Desligado: toda tabela/função nova precisa de GRANT explícito na migração.
+auto_expose_new_tables = false
 
 [api.tls]
 # Enable HTTPS endpoints locally using a self-signed certificate.
@@ -382,6 +383,11 @@ policy = "per_worker"
 inspector_port = 8093
 # The Deno major version to use.
 deno_version = 2
+
+# Edge Function do botão "Publicar alterações". O gateway confere o JWT e a função
+# confere, além disso, se a pessoa é editora. Segredos: supabase/functions/.env.example.
+[functions.publish-site]
+verify_jwt = true
 
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"

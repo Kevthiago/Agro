@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import { signInWithGoogle, signInWithPassword, type AdminClient } from "@/admin/auth";
+import { friendlyMessage } from "@/admin/errors";
 
 interface Props {
   client: AdminClient;
@@ -18,7 +19,8 @@ export default function LoginScreen({ client }: Props) {
     try {
       await action();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Não foi possível entrar agora.");
+      // só mensagens nossas (AdminError) vão para a tela; o resto vira a genérica
+      setError(friendlyMessage(e));
     } finally {
       setBusy(false);
     }

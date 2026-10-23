@@ -128,8 +128,27 @@
   gap: 1rem;
 }
 
-/* reservado para "Publicar alterações" */
+/* "Publicar alterações" */
 .admin-publicar:empty {
+  display: none;
+}
+
+.admin-publicar {
+  flex: 1 1 18rem;
+  max-width: 26rem;
+}
+
+.admin-botao-publicar {
+  width: 100%;
+}
+
+.admin-publicar-ajuda {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.admin-publicar .admin-aviso:empty,
+.admin-publicar .admin-erro:empty {
   display: none;
 }
 

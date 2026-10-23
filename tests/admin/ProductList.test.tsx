@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import ProductList from "@/admin/ProductList";
 import ProductsPanel from "@/admin/ProductsPanel";
 import type { ProductsClient, SelectQuery } from "@/admin/products-api";
+import type { PublishClient } from "@/admin/publish";
 import type { ProductRow } from "@/lib/types";
 import type { AdminProduct } from "@/admin/types";
 import { fakeProductsClient, productRow } from "./fake-products";
@@ -163,8 +164,9 @@ describe("<ProductsPanel />", () => {
       productRow({ id: "p2", slug: "pa", name: "Pá", sort_order: 1 }),
     ]);
     const pending: ((rows: ProductRow[]) => void)[] = [];
-    const client: ProductsClient = {
+    const client: ProductsClient & PublishClient = {
       storage: fake.client.storage,
+      functions: fake.client.functions,
       from: () => ({ ...fake.client.from(), select: () => heldSelect(pending) }),
     };
     render(<ProductsPanel client={client} />);
@@ -248,7 +250,10 @@ describe("<ProductsPanel />", () => {
     fail.update.push({ code: "42501", message: "permission denied for table products" });
     fireEvent.click(box);
     await waitFor(() =>
-      expect(screen.getByRole("alert").textContent).toBe("Você não tem permissão para fazer isso."),
+      // o painel tem dois alertas: o da lista e o do botão de publicar (vazio)
+      expect(screen.getAllByRole("alert").map((a) => a.textContent)).toContain(
+        "Você não tem permissão para fazer isso.",
+      ),
     );
   });
 

@@ -48,7 +48,7 @@ export function fakeClient(options: FakeOptions = {}) {
           },
         };
       }),
-      signInWithOAuth: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+      signInWithOAuth: vi.fn((): Promise<AuthResult> => Promise.resolve({ data: {}, error: null })),
       signInWithPassword: vi.fn((): Promise<AuthResult> =>
         Promise.resolve({ data: {}, error: null }),
       ),
@@ -59,6 +59,7 @@ export function fakeClient(options: FakeOptions = {}) {
       rpcResult instanceof Error ? Promise.reject(rpcResult) : Promise.resolve(rpcResult),
     ),
     from: products.client.from,
+    functions: products.client.functions,
     storage: products.client.storage,
   } satisfies PanelClient;
 
